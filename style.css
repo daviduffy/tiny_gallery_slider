@@ -1,0 +1,53 @@
+html:root {
+  --height: 400px
+}
+
+* {
+  box-sizing: border-box;
+}
+
+img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.page {
+  padding-top: 20px;
+  width: 800px;
+  height: var( --height );
+  background-color: white;
+  margin: auto
+}
+
+.slider {
+  width: 100%;
+  margin: 0;
+  border: 1px solid gray;
+  overflow: hidden;
+}
+
+.slider__track {
+  min-height: var( --height );
+  transition: transform .44s ease;
+}
+
+.slide {
+  margin: 0;
+  float: left; /* eliminates 4-5px margin between images */
+  border-left: 2px solid transparent;
+  display: inline-block;
+  height: var( --height );
+}
+
+.nav {
+  text-align: center;
+}
+
+.nav__icon {
+  display: inline-block;
+  padding: 6px 4px;
+}
+
+.nav__icon--left {
+  transform: translateY(3px) rotate(180deg);
+}

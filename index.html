@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <link rel="stylesheet" href="style.css">
+  <title>Slider Test</title>
+</head>
+<body>
+  <div class="page">
+    <div class="slider">
+      <div class="slider__track">
+        <div class="slide slide--6">
+          <img src="img/img-6.png" />
+        </div>
+        <div class="slide slide--1 slide--active">
+          <img src="img/img-1.png" />
+        </div>
+        <div class="slide slide--2">
+          <img src="img/img-2.png" />
+        </div>
+        <div class="slide slide--3">
+          <img src="img/img-3.png" />
+        </div>
+        <div class="slide slide--4">
+          <img src="img/img-4.png" />
+        </div>
+        <div class="slide slide--5">
+          <img src="img/img-5.png" />
+        </div>
+      </div>
+
+    </div>
+    <nav class="nav">
+      <button class="nav__button" onclick="g_slider.update(-1);">
+        <span class="nav__icon nav__icon--left">&raquo;</span>
+      </button>
+      <button class="nav__button" onclick="g_slider.update(1);">
+        <span class="nav__icon nav__icon--right">&raquo;</span>
+      </button>
+    </nav>
+
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
