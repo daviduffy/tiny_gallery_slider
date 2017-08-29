@@ -1,5 +1,4 @@
 # Tiny Slider
----
 
 A super lightweight horizontal slider made with vanilla javascript. 
 Intended use is to copy and modify the code directly, move html elements around, etc.
