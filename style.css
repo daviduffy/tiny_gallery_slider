@@ -28,6 +28,10 @@ img {
 
 .slider__track {
   min-height: var( --height );
+  will-change: transform;
+}
+
+.slider__track--animating {
   transition: transform .44s ease;
 }
 

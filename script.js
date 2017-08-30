@@ -8,11 +8,13 @@ const g_slider = {
   // any additional slide width, in pixels
   slide_width_modifier    : 2,
 
-  current_index           : 2,
+  current_index           : 0,
 
-  working_index           : 2,
+  relative_index          : 0,
 
   scrolling_right         : true,
+
+  endless_scroll          : false,
 
   getNextInSequence       : delta => {
                               let nextInSequence = g_slider.current_index + delta;
@@ -38,9 +40,9 @@ const g_slider = {
 
   setWorkingIndex         : index => {
                             if ( index < 0 ) {
-                              g_slider.working_index = g_slider.slides.length + g_slider.current_index;
+                              g_slider.relative_index = g_slider.slides.length + g_slider.current_index;
                             } else {
-                              g_slider.working_index = g_slider.current_index;
+                              g_slider.relative_index = g_slider.current_index;
                             }
                           },
   setScrollDirection      : delta => {
@@ -51,7 +53,7 @@ const g_slider = {
                             }
                           },
 
-  // this may not be needed
+  // this is not currently in use
   // it might also be detrimental to have for lazy loading
   getTrackWidth           : () => {
                               // it seems that there is one missing margin, no matter what
@@ -79,15 +81,11 @@ const g_slider = {
                               if ( preceeding_slide_widths.length > 0 ) {
                                 preceeding_widths += preceeding_slide_widths.reduce((prev, curr) => prev + curr + g_slider.slide_width_modifier );
                               }
-                              console.log('combined preceeding width: ', preceeding_widths);
-
-                              // make sure we have a working index
-                              g_slider.setWorkingIndex(g_slider.current_index);
-
+                              // console.log('combined preceeding width: ', preceeding_widths);
 
                               // get diff between current slide and window
-                              console.log('current width: ', g_slider.slides[g_slider.working_index].width)
-                              const diff = g_slider.container.clientWidth - g_slider.slides[g_slider.working_index].width;
+                              // console.log('current width: ', g_slider.slides[g_slider.current_index].width)
+                              const diff = g_slider.container.clientWidth - g_slider.slides[g_slider.current_index].width;
                               // console.log('diff: ', diff);
 
                               // add diff / 2 to widths
@@ -103,57 +101,64 @@ const g_slider = {
                                 image.setAttribute("src", image.dataset.src );
                                 image.removeAttribute('data-src');
                               }
+                              if ( image.complete ) {
+                                g_slider.setSlides();
+                              } else {
+                                image.addEventListener( 'load', g_slider.setSlides );
+                              }
                             },
 
-  loadIf                  : (delta, prepend_flag = false) => {
+  loadIf                  : delta => {
                               let outer_slide;
                               let delta_extended = delta + delta;
-                              let DOM_adjusted = false;
+                              console.log(g_slider.current_index);
 
                               // if we have moved
                               if ( delta !== 0 ) {
-                                let prepend_modifier = 0;
-                                if ( prepend_flag ) {
-                                  prepend_modifier = 1; 
-                                }
+
                                   // delta + delta here allows us to load the slide after the next one in both directions
-                                  outer_slide = g_slider.slides[g_slider.getNextInSequence(delta_extended) + prepend_modifier ];
+                                  outer_slide = g_slider.slides[g_slider.getNextInSequence(delta_extended) ];
 
                                 // console.log('loading up slide ' + g_slider.getNextInSequence(delta_extended));
                                 // console.log('scrolling right: ' + g_slider.scrolling_right);
+                                console.log('outer_slide')
                                 console.log(outer_slide);
                               }
 
+                              // deal with endless scrolling
+                              if ( g_slider.endless_scroll ) {
 
-                              // if user is navigating towards the edge of the array
-                              if ( !g_slider.slides[g_slider.current_index + delta_extended] || prepend_flag ) {
+                                // if user is navigating towards the edge of the array & moving right
+                                if ( !g_slider.slides[g_slider.current_index + delta_extended] && g_slider.scrolling_right ) {
 
-                                // clone the slide they would want to see
-                                const cloned_slide = outer_slide.elem.cloneNode(true);
-                                cloned_slide.classList.add('slide--cloned');
-                                console.log(cloned_slide);
+                                  // remove the slide they would want to see
+                                  const slide_to_move = g_slider.track.querySelector('.slide:first-child');
+                                  const moved_slide = g_slider.track.removeChild(slide_to_move);
+                                  console.log("moved_slide");
+                                  console.log(moved_slide);
+                                  // add it to the other side
+                                  g_slider.track.appendChild(moved_slide);
+                                  g_slider.current_index--;
+                                  console.log('edge')
 
-                                // and add it to the track on the appropriate side
-                                if ( g_slider.scrolling_right ) {
-                                  g_slider.track.appendChild(cloned_slide);
-                                } else {
-                                  g_slider.track.insertBefore(cloned_slide, g_slider.track.firstElementChild);
+                                  g_slider.setSlides();
+                                } else if ( !g_slider.slides[g_slider.current_index - delta_extended] && !g_slider.scrolling_right ) {
+                                  const slide_to_move = g_slider.track.querySelector('.slide:last-child');
+                                  const moved_slide = g_slider.track.removeChild(slide_to_move);
+                                  g_slider.track.insertBefore(moved_slide, g_slider.track.firstElementChild);
+
+                                  console.log(g_slider.current_index)
+                                  g_slider.current_index = g_slider.getNextInSequence(+1);
+                                  console.log(g_slider.current_index)
                                 }
-                                // update info from DOM before next step
-                                g_slider.switchSrc(cloned_slide);
-                                g_slider.setSlides();
                               }
+                              
                               // console.log(outer_slide)
 
                               // if the outer slide has 
                               if ( outer_slide && outer_slide.width == 0 ) {
                                 // console.log('near edge');
                                 g_slider.switchSrc(outer_slide.elem);
-                                DOM_adjusted = true;
-                              }
-
-                              if ( DOM_adjusted ) {
-                                g_slider.setSlides();
                               }
                             },
 
@@ -161,34 +166,32 @@ const g_slider = {
                               // set scroll direction
                               g_slider.setScrollDirection(delta);
 
-                              if ( !(g_slider.current_index + (delta + delta)) && !g_slider.scrolling_right ) {
-                                // don't change index because a new slide gets added
-                                console.log('current_index not updated');
-                                // update src attributes if the next image is using `data-src`
-                                g_slider.loadIf(delta, true);
-
-                              } else {
-                                // set index the next slide in the current sequence
-                                g_slider.current_index = g_slider.current_index + delta;
-                                // update src attributes if the next image is using `data-src`
-                                g_slider.loadIf(delta);
-                              }
-
                               // remove active class from current slide
-                              // g_slider.slides[g_slider.current_index].elem.classList.remove('slide--active');
+                              g_slider.slides[g_slider.current_index].elem.classList.remove('slide--active');
 
+                              // set index the next slide in the current sequence
+                              g_slider.current_index = g_slider.getNextInSequence(delta);
+
+                              // update src attributes if the next image is using `data-src`
+                              g_slider.loadIf(delta);
+
+                              // add animating class to slider track (will not animate without)
+                              g_slider.track.classList.add('slider__track--animating');
+
+                              // set CSS for slider track
                               g_slider.track.style.transform = 'translateX(' + -g_slider.getTrackPosition() + 'px)';
-                              // console.log('end of update', g_slider.current_index);
-                              // if ( !g_slider.scrolling_right ) {
-                              //   g_slider.slides[g_slider.current_index].elem.classList.add('slide--active');
-                              // }
-                              // g_slider.slides[g_slider.current_index].elem.classList.add('slide--active');
+
+                              // add active class to new slide
+                              g_slider.slides[g_slider.current_index].elem.classList.add('slide--active');
                             },
 
   init                    : () => {
+                              // get current state of slides
                               g_slider.setSlides();
-                              // g_slider.track.style.width = g_slider.getTrackWidth() + 'px';
-                              // it might be better just to spoof the width in css (current approach)
+                              
+                              g_slider.track.addEventListener('transitionend', function(){
+                                g_slider.track.classList.remove('slider__track--animating');
+                              });
                               g_slider.update();
                             }
 }
