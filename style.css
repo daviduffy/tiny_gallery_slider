@@ -19,19 +19,23 @@ img {
   margin: auto
 }
 
-.slider {
+.g-slider {
   width: 100%;
   margin: 0;
   border: 1px solid gray;
   overflow: hidden;
 }
 
-.slider__track {
+.g-slider__track {
   min-height: var( --height );
+  will-change: transform;
+}
+
+.g-slider__track--is-animating {
   transition: transform .44s ease;
 }
 
-.slide {
+.g-slider__slide {
   margin: 0;
   float: left; /* eliminates 4-5px margin between images */
   border-left: 2px solid transparent;
@@ -39,15 +43,15 @@ img {
   height: var( --height );
 }
 
-.nav {
+.g-slider__nav {
   text-align: center;
 }
 
-.nav__icon {
+.g-slider__nav-icon {
   display: inline-block;
   padding: 6px 4px;
 }
 
-.nav__icon--left {
+.g-slider__nav-icon--left {
   transform: translateY(3px) rotate(180deg);
 }
