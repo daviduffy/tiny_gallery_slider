@@ -7,10 +7,10 @@ Intended use is to copy and modify the code directly, move html elements around,
 
 ## Features:
  - horizontal sliding (backwards and forwards)
- - animation set in CSS via `slider__track--is-animating` class
+ - animation set in CSS via `g-slider__track--is-animating` class
  - centered image with previous and next images displayed on R and L
  - slide images loaded on-demand when using the `data-src` attribute
- - `slide--is-active` class on active slide
+ - `g-slider__slide--is-active` class on active slide
 
 
 ## In Progress:
