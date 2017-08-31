@@ -38,17 +38,15 @@
           <img src="http://placehold.it/1200x800?text=slide9" />
         </div>
       </div>
-
+      <nav class="g-slider__nav">
+        <button class="g-slider__nav-button" onclick="g_s.update(-1);">
+          <span class="g-slider__nav-icon g-slider__nav-icon--left">&raquo;</span>
+        </button>
+        <button class="g-slider__nav-button" onclick="g_s.update(1);">
+          <span class="g-slider__nav-icon g-slider__nav-icon--right">&raquo;</span>
+        </button>
+      </nav>
     </div>
-    <nav class="g-slider__nav">
-      <button class="g-slider__nav-button" onclick="g_s.update(-1);">
-        <span class="g-slider__nav-icon g-slider__nav-icon--left">&raquo;</span>
-      </button>
-      <button class="g-slider__nav-button" onclick="g_s.update(1);">
-        <span class="g-slider__nav-icon g-slider__nav-icon--right">&raquo;</span>
-      </button>
-    </nav>
-
   </div>
   <script src="script.js"></script>
 </body>

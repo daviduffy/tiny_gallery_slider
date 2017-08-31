@@ -15,29 +15,42 @@ const g_s = {
 
   endless_scroll          : false,
 
+  // gets me the next n
   getNextInSequence       : delta => {
                               let nextInSequence = g_s.current_index + delta;
+
+                              // diff employed to allow scrolling more than one slide at a time
                               let diff = 0;
 
-                              // at the end
+                              // if the next number is off the end
                               if ( nextInSequence >= g_s.slides.length ) {
+
+                                // see how far we wanted to scroll
                                 diff = nextInSequence - g_s.current_index
+
+                                // and scroll that far into the beginning
                                 nextInSequence = -1 + diff;
                               }
-                              // at the start
+
+                              // if the next number goes into the negatives
                               if ( nextInSequence < 0 ) {
+
+                                // see how far
                                 diff = 0 - -nextInSequence;
+
+                                // and reverse that far from the end
                                 nextInSequence = g_s.slides.length + diff;
                               }
                               return nextInSequence;
                             },
 
-  // this is a function because `slides` needs to be refreshed from time to time
+  // function to refresh `slides` from time to time
   setSlides               : () => {
                               g_s.slides = Array.from(document.querySelectorAll('.g-slider__slide')).map(current => ({elem: current, width: current.clientWidth}))
                             },
 
   // resets an object-scoped bool based on whether user scrolled L or R
+  // using this is unecessary but makes code easier to read
   setScrollDirection      : delta => {
                             if ( delta > 0 ) {
                               g_s.scrolling_right = true;
@@ -47,7 +60,7 @@ const g_s = {
                           },
 
   // this is not currently in use
-  // it might also be detrimental to have for lazy loading
+  // it also doesn't work as intended when images are lazy loaded
   getTrackWidth           : () => {
                               // it seems that there is one missing margin, no matter what
                               var width = g_s.slide_width_modifier;
@@ -115,6 +128,7 @@ const g_s = {
 
                               // delta + delta here allows us to load the slide after the next one in both directions
                               outer_slide = g_s.slides[ g_s.getNextInSequence(delta_extended) ];
+                              // console.log('the slide I am checking is ', outer_slide.elem);
 
                               // find image inside slide
                               const image = outer_slide.elem.querySelector('img');
@@ -146,14 +160,13 @@ const g_s = {
                               if ( g_s.scrolling_right ) {
 
                                 // flags the last two indexes while moving right
-                                if ( g_s.current_index >= (g_s.slides.length - 2 ) ) {
-                                  console.log('right edge');
+                                if ( g_s.current_index >= (g_s.slides.length - 1 ) ) {
 
                                   // target first slide
-                                  const slide_to_move = g_s.track.querySelector('.g-slider__slide:first-child');
+                                  let slide_to_move = g_s.track.querySelector('.g-slider__slide:first-child');
 
                                   // remove first slide
-                                  const moved_slide = g_s.track.removeChild(slide_to_move);
+                                  let moved_slide = g_s.track.removeChild(slide_to_move);
 
                                   // append as last slide
                                   g_s.track.appendChild(moved_slide);
@@ -175,8 +188,29 @@ const g_s = {
                               } else if ( !g_s.scrolling_right ) {
 
                                 // flags the last two indexes while moving left
-                                if ( g_s.current_index <= 1 ) {
-                                  console.log('left edge');
+                                if ( g_s.current_index <= 0 ) {
+
+                                  // target last slide
+                                  let slide_to_move = g_s.track.querySelector('.g-slider__slide:last-child');
+
+                                  // remove last slide
+                                  let moved_slide = g_s.track.removeChild(slide_to_move);
+
+                                  // append as first slide
+                                  g_s.track.insertBefore(moved_slide, g_s.track.querySelector('.g-slider__slide:first-child'));
+
+                                  // reset slides info
+                                  g_s.setSlides();
+
+                                  // set current index as if I am on the next slide
+                                  g_s.current_index = g_s.current_index + -(delta*2);
+
+                                  // reset translation of track to next slide
+                                  g_s.setTrackPosition();
+
+                                  // re-select current index to the "new" next slide
+                                  g_s.current_index = g_s.getNextInSequence(delta);
+
                                 }
                               }
                               
@@ -184,7 +218,7 @@ const g_s = {
                               setTimeout(function(){
 
                                 // add animating class to slider track (will not animate without)
-                                g_s.track.classList.add('g-slider__track--is-animating');
+                                g_s.container.classList.add('g-slider--is-animating');
                                 // console.log('before animation', g_s.track.style.transform);
 
                                 // set CSS for slider track
@@ -201,8 +235,8 @@ const g_s = {
                               g_s.setSlides();
                               
                               // remove class once transition is over
-                              g_s.track.addEventListener('transitionend', function(){
-                                g_s.track.classList.remove('g-slider__track--is-animating');
+                              g_s.container.addEventListener('transitionend', function(){
+                                g_s.container.classList.remove('g-slider--is-animating');
                               });
 
                               // run update the first time
