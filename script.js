@@ -9,7 +9,7 @@ const g_s = {
   // any additional slide width, in pixels
   slide_width_modifier    : 2,
 
-  current_index           : 0,
+  current_index           : 1,
 
   scrolling_right         : true,
 
@@ -73,15 +73,10 @@ const g_s = {
                             },
 
   // sets the CSS to center the current image
-  setTrackPosition        : (flag = false) => {
-                              let the_slide;
-                              if ( flag ) {
-                                the_slide = g_s.current_index - 1;
-                              } else {
-                                the_slide = g_s.current_index
-                              }
+  setTrackPosition        : () => {
+
                               // all slide elements that come before the current one
-                              const preceeding_slides = g_s.slides.filter(current => g_s.slides.indexOf(current) < the_slide );
+                              const preceeding_slides = g_s.slides.filter(current => g_s.slides.indexOf(current) < g_s.current_index );
                               // console.table(preceeding_slides);
 
                               // add up widths of all slides before this one
@@ -96,8 +91,8 @@ const g_s = {
                               // console.log('combined preceeding width: ', preceeding_widths);
 
                               // get diff between current slide and window
-                              // console.log('current width: ', g_s.slides[the_slide].width)
-                              const diff = g_s.container.clientWidth - g_s.slides[the_slide].width;
+                              // console.log('current width: ', g_s.slides[g_s.current_index].width)
+                              const diff = g_s.container.clientWidth - g_s.slides[g_s.current_index].width;
                               // console.log('diff: ', diff);
 
                               // add diff / 2 to widths
@@ -141,12 +136,20 @@ const g_s = {
                               }
                             },
 
+  // hopefully self-explanatory
+  setImageClasses         : (action) => {
+                              g_s.slides[g_s.getNextInSequence(-1)].elem.classList.toggle('g-slider__slide--is-prev');
+                              g_s.slides[g_s.current_index].elem.classList.toggle('g-slider__slide--is-current');
+                              g_s.slides[g_s.getNextInSequence(1)].elem.classList.toggle('g-slider__slide--is-next');
+                            },
+
+  // run all of the functions needed to more forward or back
   update                  : (delta = 0) => {
                               // set scroll direction
                               g_s.setScrollDirection(delta);
 
-                              // remove active class from current slide
-                              g_s.slides[g_s.current_index].elem.classList.remove('g-slider__slide--is-active');
+                              // remove current classes from current slides
+                              g_s.setImageClasses('remove');
 
                               // set index the next slide in the current sequence
                               g_s.current_index = g_s.getNextInSequence(delta);
@@ -224,8 +227,8 @@ const g_s = {
                                 // set CSS for slider track
                                 g_s.setTrackPosition();
 
-                                // add active class to new slide
-                                g_s.slides[g_s.current_index].elem.classList.add('g-slider__slide--is-active');
+                                // add classes to new slides
+                                g_s.setImageClasses('add');
                               }, 1);
                               
                             },
@@ -233,18 +236,45 @@ const g_s = {
   init                    : () => {
                               // get current state of slides
                               g_s.setSlides();
+
+                              // set track position
+                              g_s.setTrackPosition();
+
+                              // add classes to the proper elements
+                              g_s.setImageClasses();
                               
-                              // remove class once transition is over
+                              // trigger to remove class from slider once transition is over
                               g_s.container.addEventListener('transitionend', function(){
                                 g_s.container.classList.remove('g-slider--is-animating');
                               });
 
-                              // run update the first time
-                              g_s.update();
+                              //
+                              document.querySelector('.g-slider__slide--is-prev').addEventListener('click', function(){
+                                g_s.update(-1);
+                              }, false);
+                              document.querySelector('.g-slider__slide--is-next').addEventListener('click', function(){
+                                g_s.update(1);
+                              }, false);
+
+                              // trigger to recalculate slide widths when window resize occurs
+                              var last_known_scroll_position = 0;
+                              var ticking = false;
+                              window.addEventListener('resize', function(e) {
+                                last_known_scroll_position = window.scrollY;
+                                if (!ticking) {
+                                  window.requestAnimationFrame(function() {
+                                    g_s.setSlides();
+                                    g_s.setTrackPosition();
+                                    ticking = false;
+                                  });
+                                }
+                                ticking = true;
+                              });
                             }
 }
 
+// timeout here is to ensure that the slider doesn't center itself on the current_index
+// without all images loaded
 setTimeout(function(){
   g_s.init();
-
-}, 500);
+},500)
