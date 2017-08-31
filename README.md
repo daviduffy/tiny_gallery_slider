@@ -15,18 +15,18 @@ Intended use is to copy and modify the code directly, move html elements around,
  - only scrolling (no fading) supported
  - animation timing and easing set in CSS via the `g-slider--is-animating` class
  - classes for previous, active, and next slides:
-    ```
-    .g-slider__slide--is-prev
-    .g-slider__slide--is-current
-    .g-slider__slide--is-next
+    ```HTML
+        .g-slider__slide--is-prev
+        .g-slider__slide--is-current
+        .g-slider__slide--is-next
 
     ```
 
 
 ### Lazy loading: (No AJAX)
- - Slide images can be loaded on-demand instead of all at once by substituting `data-src` for the `src` attribute. Slide images are loaded when they are 2 slides away from the current slide, relative to the scroll direction.
+ - Slide images can be loaded on-demand by substituting `data-src` for the normal `src` attribute. When a slide with a `data-src` attribute is 2 slides away from the current slide, the image is loaded by adding a `src` attribute and setting it to the value of the `data-src` attribute. The `data-src` attribute is removed.
 
-    ```
+    ```HTML
         <div class="g-slider__slide g-slider__slide--4">
           <img src="img/img-4.png" />
           <!-- this slide's image will load when the page loads -->
@@ -37,14 +37,14 @@ Intended use is to copy and modify the code directly, move html elements around,
         </div>
     ```
 
- - Currently you must have at least 5 images load when the page loads, with the `current_index` set to the center slide.
+ - Currently you must have at least 5 images with `src` attributes when the page loads, with the `current_index` set to the center slide.
+
+### Responsive:
+ - Slider height can be set using the `--height` CSS custom property. The slider recalculates slide widths and track position, re-centering the current slide automatically if the screen dimensions change.
 
 ## In Progress:
- - **Responsive Review** 
-
+ - address intro delay: curtain over slider while images loading + event listener for when images loaded?
 
 ## Planned:
- - address intro delay
-     - curtain over slider while images loading + event listener for when images loaded?
  - Init via object
  - Turn README into usage documentation
