@@ -1,5 +1,6 @@
 html:root {
-  --height: 400px
+  --height: 400px;
+  --bezier: 0.56, 0.26, 0.37, 0.98;
 }
 
 * {
@@ -22,17 +23,12 @@ img {
 .g-slider {
   width: 100%;
   margin: 0;
-  border: 1px solid gray;
   overflow: hidden;
 }
 
 .g-slider__track {
   min-height: var( --height );
   will-change: transform;
-}
-
-.g-slider__track--is-animating {
-  transition: transform .44s ease;
 }
 
 .g-slider__slide {
@@ -44,6 +40,7 @@ img {
 }
 
 .g-slider__nav {
+  margin-top: 1rem;
   text-align: center;
 }
 
@@ -54,4 +51,12 @@ img {
 
 .g-slider__nav-icon--left {
   transform: translateY(3px) rotate(180deg);
+}
+
+/* Animation */
+.g-slider--is-animating .g-slider__track {
+  transition: transform .33s cubic-bezier( var( --bezier ) );
+}
+.g-slider--is-animating .g-slider__nav {
+  pointer-events: none;
 }
