@@ -11,8 +11,6 @@ const g_s = {
 
   current_index           : 0,
 
-  relative_index          : 0,
-
   scrolling_right         : true,
 
   endless_scroll          : false,
@@ -34,22 +32,16 @@ const g_s = {
                               return nextInSequence;
                             },
 
-  // this is a function because `slides` needs to be refreshed from time to t
+  // this is a function because `slides` needs to be refreshed from time to time
   setSlides               : () => {
                               g_s.slides = Array.from(document.querySelectorAll('.g-slider__slide')).map(current => ({elem: current, width: current.clientWidth}))
                             },
 
-  setWorkingIndex         : index => {
-                            if ( index < 0 ) {
-                              g_s.relative_index = g_s.slides.length + g_s.current_index;
-                            } else {
-                              g_s.relative_index = g_s.current_index;
-                            }
-                          },
+  // resets an object-scoped bool based on whether user scrolled L or R
   setScrollDirection      : delta => {
                             if ( delta > 0 ) {
                               g_s.scrolling_right = true;
-                            } else {
+                            } else if ( delta < 0 ) {
                               g_s.scrolling_right = false;
                             }
                           },
@@ -68,9 +60,15 @@ const g_s = {
                             },
 
   // sets the CSS to center the current image
-  getTrackPosition        : () => {
+  setTrackPosition        : (flag = false) => {
+                              let the_slide;
+                              if ( flag ) {
+                                the_slide = g_s.current_index - 1;
+                              } else {
+                                the_slide = g_s.current_index
+                              }
                               // all slide elements that come before the current one
-                              const preceeding_slides = g_s.slides.filter(current => g_s.slides.indexOf(current) < g_s.current_index );
+                              const preceeding_slides = g_s.slides.filter(current => g_s.slides.indexOf(current) < the_slide );
                               // console.table(preceeding_slides);
 
                               // add up widths of all slides before this one
@@ -85,23 +83,25 @@ const g_s = {
                               // console.log('combined preceeding width: ', preceeding_widths);
 
                               // get diff between current slide and window
-                              // console.log('current width: ', g_s.slides[g_s.current_index].width)
-                              const diff = g_s.container.clientWidth - g_s.slides[g_s.current_index].width;
+                              // console.log('current width: ', g_s.slides[the_slide].width)
+                              const diff = g_s.container.clientWidth - g_s.slides[the_slide].width;
                               // console.log('diff: ', diff);
 
                               // add diff / 2 to widths
                               const total_width = preceeding_widths - ( diff / 2 );
-                              return total_width;
+
+                              // set track position
+                              g_s.track.style.transform = 'translateX(' + -total_width + 'px)';
                             },
 
-  switchSrc               : elem => {
-                              const image = elem.querySelector('img');
-                              // console.log(image);
-                              // this occasionally errors and and sets src to 'undefined'
-                              if ( image.dataset.src ) {
-                                image.setAttribute("src", image.dataset.src );
-                                image.removeAttribute('data-src');
-                              }
+  switchSrc               : image => {
+                              // set src attribute to value from `data-src`
+                              image.setAttribute('src', image.dataset.src );
+
+                              // remove `data-src` attribute entirely
+                              image.removeAttribute( 'data-src' );
+
+                              // set up event listener to reset slides once image loads
                               if ( image.complete ) {
                                 g_s.setSlides();
                               } else {
@@ -112,54 +112,18 @@ const g_s = {
   loadIf                  : delta => {
                               let outer_slide;
                               let delta_extended = delta + delta;
-                              console.log(g_s.current_index);
 
-                              // if we have moved
-                              if ( delta !== 0 ) {
+                              // delta + delta here allows us to load the slide after the next one in both directions
+                              outer_slide = g_s.slides[ g_s.getNextInSequence(delta_extended) ];
 
-                                  // delta + delta here allows us to load the slide after the next one in both directions
-                                  outer_slide = g_s.slides[g_s.getNextInSequence(delta_extended) ];
+                              // find image inside slide
+                              const image = outer_slide.elem.querySelector('img');
 
-                                // console.log('loading up slide ' + g_s.getNextInSequence(delta_extended));
-                                // console.log('scrolling right: ' + g_s.scrolling_right);
-                                console.log('outer_slide')
-                                console.log(outer_slide);
-                              }
+                              // if the image has a `data-src attribute`
+                              if ( image.dataset.src ) {
 
-                              // deal with endless scrolling
-                              if ( g_s.endless_scroll ) {
-
-                                // if user is navigating towards the edge of the array & moving right
-                                if ( !g_s.slides[g_s.current_index + delta_extended] && g_s.scrolling_right ) {
-
-                                  // remove the slide they would want to see
-                                  const slide_to_move = g_s.track.querySelector('.g-slider__slide:first-child');
-                                  const moved_slide = g_s.track.removeChild(slide_to_move);
-                                  console.log("moved_slide");
-                                  console.log(moved_slide);
-                                  // add it to the other side
-                                  g_s.track.appendChild(moved_slide);
-                                  g_s.current_index--;
-                                  console.log('edge')
-
-                                  g_s.setSlides();
-                                } else if ( !g_s.slides[g_s.current_index - delta_extended] && !g_s.scrolling_right ) {
-                                  const slide_to_move = g_s.track.querySelector('.g-slider__slide:last-child');
-                                  const moved_slide = g_s.track.removeChild(slide_to_move);
-                                  g_s.track.insertBefore(moved_slide, g_s.track.firstElementChild);
-
-                                  console.log(g_s.current_index)
-                                  g_s.current_index = g_s.getNextInSequence(+1);
-                                  console.log(g_s.current_index)
-                                }
-                              }
-                              
-                              // console.log(outer_slide)
-
-                              // if the outer slide has 
-                              if ( outer_slide && outer_slide.width == 0 ) {
-                                // console.log('near edge');
-                                g_s.switchSrc(outer_slide.elem);
+                                // remove `data-src` and set `src` value
+                                g_s.switchSrc(image);
                               }
                             },
 
@@ -173,26 +137,75 @@ const g_s = {
                               // set index the next slide in the current sequence
                               g_s.current_index = g_s.getNextInSequence(delta);
 
-                              // update src attributes if the next image is using `data-src`
-                              g_s.loadIf(delta);
+                              // if we have moved, check and update src attributes
+                              if ( delta !== 0 ) {
+                                g_s.loadIf(delta);
+                              }
 
-                              // add animating class to slider track (will not animate without)
-                              g_s.track.classList.add('g-slider__track--is-animating');
+                              // find if we're near an edge while moving right
+                              if ( g_s.scrolling_right ) {
 
-                              // set CSS for slider track
-                              g_s.track.style.transform = 'translateX(' + -g_s.getTrackPosition() + 'px)';
+                                // flags the last two indexes while moving right
+                                if ( g_s.current_index >= (g_s.slides.length - 2 ) ) {
+                                  console.log('right edge');
 
-                              // add active class to new slide
-                              g_s.slides[g_s.current_index].elem.classList.add('g-slider__slide--is-active');
+                                  // target first slide
+                                  const slide_to_move = g_s.track.querySelector('.g-slider__slide:first-child');
+
+                                  // remove first slide
+                                  const moved_slide = g_s.track.removeChild(slide_to_move);
+
+                                  // append as last slide
+                                  g_s.track.appendChild(moved_slide);
+
+                                  // reset slides
+                                  g_s.setSlides();
+
+                                  // set current index as if I am on the previous slide
+                                  g_s.current_index = g_s.current_index + -(delta*2);
+
+                                  // reset translation of track to previous slide
+                                  g_s.setTrackPosition();
+
+                                  // re-select current index to the "new" next slide
+                                  g_s.current_index = g_s.getNextInSequence(delta);
+                                }
+
+                              // find if we're near an edge while moving left
+                              } else if ( !g_s.scrolling_right ) {
+
+                                // flags the last two indexes while moving left
+                                if ( g_s.current_index <= 1 ) {
+                                  console.log('left edge');
+                                }
+                              }
+                              
+                              // required for browser to catch up with infinite scroll
+                              setTimeout(function(){
+
+                                // add animating class to slider track (will not animate without)
+                                g_s.track.classList.add('g-slider__track--is-animating');
+                                // console.log('before animation', g_s.track.style.transform);
+
+                                // set CSS for slider track
+                                g_s.setTrackPosition();
+
+                                // add active class to new slide
+                                g_s.slides[g_s.current_index].elem.classList.add('g-slider__slide--is-active');
+                              }, 1);
+                              
                             },
 
   init                    : () => {
                               // get current state of slides
                               g_s.setSlides();
                               
+                              // remove class once transition is over
                               g_s.track.addEventListener('transitionend', function(){
                                 g_s.track.classList.remove('g-slider__track--is-animating');
                               });
+
+                              // run update the first time
                               g_s.update();
                             }
 }
