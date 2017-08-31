@@ -1,4 +1,4 @@
-# Tiny Slider
+# Tiny Gallery Slider
 
 A super lightweight horizontal image slider made with vanilla javascript. 
 Intended use is to copy and modify the code directly, move html elements around, etc.
@@ -40,7 +40,7 @@ Intended use is to copy and modify the code directly, move html elements around,
  - Currently you must have at least 5 images with `src` attributes when the page loads, with the `current_index` set to the center slide.
 
 ### Responsive:
- - Slider height can be set using the `--height` CSS custom property. The slider recalculates slide widths and track position, re-centering the current slide automatically if the screen dimensions change.
+ - Slider height is determined by the `--height` CSS custom property. All other elements are fluid and will adjust based on the height of this property. The slider recalculates slide widths and track position, re-centering the current slide automatically if the screen dimensions change.
 
 ## In Progress:
  - address intro delay: curtain over slider while images loading + event listener for when images loaded?
