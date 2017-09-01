@@ -15,7 +15,7 @@ Intended use is to copy and modify the code directly, move html elements around,
  - only scrolling (no fading) supported
  - animation timing and easing set in CSS via the `g-slider--is-animating` class
  - classes for previous, active, and next slides:
-    ```HTML
+    ```CSS
         .g-slider__slide--is-prev
         .g-slider__slide--is-current
         .g-slider__slide--is-next
