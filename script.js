@@ -13,13 +13,13 @@ const g_s = {
 
   scrolling_right         : true,
 
-  endless_scroll          : false,
+  endless_scroll          : true,
 
   // gets me the next n
   getNextInSequence       : delta => {
                               let nextInSequence = g_s.current_index + delta;
 
-                              // diff employed to allow scrolling more than one slide at a time
+                              // diff employed to allow scrolling more than one slide at a time (future state)
                               let diff = 0;
 
                               // if the next number is off the end
@@ -143,6 +143,39 @@ const g_s = {
                               g_s.slides[g_s.getNextInSequence(1)].elem.classList.toggle('g-slider__slide--is-next');
                             },
 
+  moveSlide               : (delta) => {
+                              // set correct selector depending on the direction of travel
+                              const selector = g_s.scrolling_right ? '.g-slider__slide:first-child' : '.g-slider__slide:last-child';
+
+                              // target slide
+                              const slide_to_move = g_s.track.querySelector(selector);
+
+                              // remove slide
+                              const moved_slide = g_s.track.removeChild(slide_to_move);
+
+                              // append slide in correct location
+                              if ( g_s.scrolling_right ) {
+
+                                // append as last slide
+                                g_s.track.appendChild(moved_slide);
+                              } else {
+                                // append as first slide
+                                g_s.track.insertBefore(moved_slide, g_s.track.querySelector('.g-slider__slide:first-child'));
+                              }
+
+                              // reset slides
+                              g_s.setSlides();
+
+                              // set current index as if I am on the previous slide
+                              g_s.current_index = g_s.current_index + -(delta*2);
+
+                              // reset translation of track to previous slide
+                              g_s.setTrackPosition();
+
+                              // re-select current index to the "new" next slide
+                              g_s.current_index = g_s.getNextInSequence(delta);
+                            },
+
   // run all of the functions needed to more forward or back
   update                  : (delta = 0) => {
                               // set scroll direction
@@ -159,64 +192,18 @@ const g_s = {
                                 g_s.loadIf(delta);
                               }
 
-                              // find if we're near an edge while moving right
-                              if ( g_s.scrolling_right ) {
+                              // if endless scroll is enabled
+                              if ( g_s.endless_scroll ) {
 
-                                // flags the last two indexes while moving right
-                                if ( g_s.current_index >= (g_s.slides.length - 1 ) ) {
+                                  // true for the last two indexes on left and right, respectively
+                                  if ( g_s.current_index <= 0 || g_s.current_index >= (g_s.slides.length - 1 ) ) {
 
-                                  // target first slide
-                                  let slide_to_move = g_s.track.querySelector('.g-slider__slide:first-child');
+                                    // move a slide
+                                    g_s.moveSlide(delta);
 
-                                  // remove first slide
-                                  let moved_slide = g_s.track.removeChild(slide_to_move);
-
-                                  // append as last slide
-                                  g_s.track.appendChild(moved_slide);
-
-                                  // reset slides
-                                  g_s.setSlides();
-
-                                  // set current index as if I am on the previous slide
-                                  g_s.current_index = g_s.current_index + -(delta*2);
-
-                                  // reset translation of track to previous slide
-                                  g_s.setTrackPosition();
-
-                                  // re-select current index to the "new" next slide
-                                  g_s.current_index = g_s.getNextInSequence(delta);
-                                }
-
-                              // find if we're near an edge while moving left
-                              } else if ( !g_s.scrolling_right ) {
-
-                                // flags the last two indexes while moving left
-                                if ( g_s.current_index <= 0 ) {
-
-                                  // target last slide
-                                  let slide_to_move = g_s.track.querySelector('.g-slider__slide:last-child');
-
-                                  // remove last slide
-                                  let moved_slide = g_s.track.removeChild(slide_to_move);
-
-                                  // append as first slide
-                                  g_s.track.insertBefore(moved_slide, g_s.track.querySelector('.g-slider__slide:first-child'));
-
-                                  // reset slides info
-                                  g_s.setSlides();
-
-                                  // set current index as if I am on the next slide
-                                  g_s.current_index = g_s.current_index + -(delta*2);
-
-                                  // reset translation of track to next slide
-                                  g_s.setTrackPosition();
-
-                                  // re-select current index to the "new" next slide
-                                  g_s.current_index = g_s.getNextInSequence(delta);
-
-                                }
+                                  }
                               }
-                              
+
                               // required for browser to catch up with infinite scroll
                               setTimeout(function(){
 
