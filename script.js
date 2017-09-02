@@ -164,6 +164,49 @@ const g_s = {
                               // re-select current index to the "new" next slide
                               g_s.current_index = g_s.getNextInSequence(delta);
                             },
+  
+  enableArrowKeys         : () => {
+
+                              g_s.track.addEventListener('focus', () => {
+                                window.addEventListener('keydown', g_s.handleArrowKey, true)
+                              });
+                              g_s.track.addEventListener('blur', () => {
+                                window.removeEventListener('keydown', g_s.handleArrowKey, true)
+                              });
+                              g_s.track.focus();
+                            },
+
+  handleArrowKey          : event => {
+                              // Do nothing if the event was already processed
+                              if (event.defaultPrevented) {
+                                  return; 
+                                }
+
+                                switch (event.key) {
+
+                                  // Left arrow moves left
+                                  case "ArrowLeft":
+                                    g_s.update(-1);
+                                    break;
+
+                                  // Right arrow moves right
+                                  case "ArrowRight":
+                                    g_s.update(1);
+                                    break;
+
+                                  // Unfocus the track
+                                  case "Escape":
+                                    document.activeElement.blur()
+                                    break;
+
+                                   // Quit when this doesn't handle the key event.
+                                  default:
+                                    return;
+                                }
+
+                                // Cancel the default action to avoid it being handled twice
+                                event.preventDefault();
+                              },
 
   // run all of the functions needed to more forward or back
   update                  : (delta = 0) => {
@@ -226,6 +269,9 @@ const g_s = {
 
                               // add classes to the proper elements
                               g_s.setImageClasses();
+
+                              // enable use of keyboard arrows to control slider
+                              g_s.enableArrowKeys();
                               
                               // trigger to remove class from slider once transition is over
                               g_s.container.addEventListener('transitionend', function(){

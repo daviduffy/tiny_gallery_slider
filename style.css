@@ -26,6 +26,7 @@ html:root {
   margin: 0;
   overflow: hidden;
   position: relative;
+  user-select: none;
 }
 
 .g-slider, .g_slider * {
@@ -68,6 +69,7 @@ html:root {
   height: var( --height );
   max-height: var( --max-height );
   will-change: transform;
+  outline: none;
 }
 
 .g-slider__slide {
@@ -77,14 +79,29 @@ html:root {
   border-left: 2px solid transparent;
 }
 
-.g-slider__nav {
-  margin-top: 1rem;
-  text-align: center;
+.g-slider__button {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  max-height: 40px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+.g-slider__button--right {
+  right: 10px;
+}
+
+.g-slider__button--left {
+  left: 10px;
 }
 
 .g-slider__nav-icon {
   display: inline-block;
-  padding: 6px 4px;
+  width: 18px;
 }
 
 .g-slider__nav-icon--left {
