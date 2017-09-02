@@ -1,7 +1,8 @@
 # Tiny Gallery Slider
 
-A super lightweight horizontal image slider made with vanilla javascript. 
-Intended use is to copy and modify the code directly, move html elements around, etc.
+[Demo](http://daviduffy.me/slider/)
+
+A horizontal image slider made with vanilla javascript.
 
 
 
@@ -14,12 +15,11 @@ Intended use is to copy and modify the code directly, move html elements around,
 ### Animation:
  - only scrolling (no fading) supported
  - animation timing and easing set in CSS via the `g-slider--is-animating` class
- - classes for previous, active, and next slides:
+ - classes for previous, current, and next slides:
     ```CSS
         .g-slider__slide--is-prev
         .g-slider__slide--is-current
         .g-slider__slide--is-next
-
     ```
 
 
@@ -49,5 +49,7 @@ Intended use is to copy and modify the code directly, move html elements around,
  - Change arbitrary setTimeout delay into actual load-in event triggered when all initial images are loaded.
 
 ## Planned:
- - Init via object
- - Turn README into usage documentation
+ - Touch scroll follows finger on longer swipe instead of triggering update immediately
+ - Accessibility audit and update
+ - Pass in settings object via init
+ - ...
