@@ -4,6 +4,8 @@ const g_s = {
 
   track                   : document.querySelector('.g-slider__track'),
 
+  curtain                 : document.querySelector('.g-slider__curtain'),
+
   slides                  : null,
 
   // any additional slide width, in pixels
@@ -58,19 +60,6 @@ const g_s = {
                               g_s.scrolling_right = false;
                             }
                           },
-
-  // this is not currently in use
-  // it also doesn't work as intended when images are lazy loaded
-  getTrackWidth           : () => {
-                              // it seems that there is one missing margin, no matter what
-                              var width = g_s.slide_width_modifier;
-                              width = width + 
-                                      // widths of all slides
-                                      g_s.slides.map(current => current.width).reduce( (prev, curr) => prev + curr + 
-                                      // plus the border width (if set)
-                                      g_s.slide_width_modifier );
-                              return width;
-                            },
 
   // sets the CSS to center the current image
   setTrackPosition        : () => {
@@ -227,6 +216,14 @@ const g_s = {
                               // set track position
                               g_s.setTrackPosition();
 
+                              // get rid of get rid of curtain when slider ready
+                              g_s.curtain.addEventListener('transitionend', function(){
+                                g_s.curtain.parentNode.removeChild(g_s.curtain);
+                              });
+
+                              // open curtain
+                              g_s.curtain.classList.add('g-slider__curtain--is-opening');
+
                               // add classes to the proper elements
                               g_s.setImageClasses();
                               
@@ -234,14 +231,6 @@ const g_s = {
                               g_s.container.addEventListener('transitionend', function(){
                                 g_s.container.classList.remove('g-slider--is-animating');
                               });
-
-                              //
-                              document.querySelector('.g-slider__slide--is-prev').addEventListener('click', function(){
-                                g_s.update(-1);
-                              }, false);
-                              document.querySelector('.g-slider__slide--is-next').addEventListener('click', function(){
-                                g_s.update(1);
-                              }, false);
 
                               // trigger to recalculate slide widths when window resize occurs
                               var last_known_scroll_position = 0;
@@ -259,7 +248,6 @@ const g_s = {
                               });
                             }
 }
-
 // timeout here is to ensure that the slider doesn't center itself on the current_index
 // without all images loaded
 setTimeout(function(){

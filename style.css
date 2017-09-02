@@ -1,5 +1,4 @@
 /* Throw-away styles
-================================================================================
 \* ========================================================================== */
 
 .page {
@@ -10,23 +9,23 @@
 }
 
 /* Vars
-================================================================================
 \* ========================================================================== */
 
 html:root {
   --height      : 90vh;
   --max-height  : 800px;
   --width       : 100%;
+  --duration    : 0.44s;
   --bezier      : 0.56, 0.26, 0.37, 0.98;
 }
 
 /* Gallery Slider Base Styles
-================================================================================
 \* ========================================================================== */
 
 .g-slider {
   margin: 0;
   overflow: hidden;
+  position: relative;
 }
 
 .g-slider, .g_slider * {
@@ -38,7 +37,33 @@ html:root {
   max-height: 100%;
 }
 
+.g-slider__curtain {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(255,255,255,1);
+  opacity: 1;
+  transition: opacity var( --duration ) cubic-bezier( var( --bezier ) );
+}
+
+.g-slider__spinner {
+  height: 40vh;
+  max-height: 220px;
+  animation: rotate360 2s linear infinite;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+}
+
 .g-slider__track {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   width: var( --width );
   height: var( --height );
   max-height: var( --max-height );
@@ -66,11 +91,23 @@ html:root {
   transform: translateY(3px) rotate(180deg);
 }
 
+/* Curtain and Spinner Animation Styles
+\* ========================================================================== */
+
+.g-slider__curtain--is-opening {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes rotate360 {
+  0% {transform: none;}
+  100% {transform: rotate(360deg);}
+}
+
 /* Gallery Slider Animation Styles
-================================================================================
 \* ========================================================================== */
 .g-slider--is-animating .g-slider__track {
-  transition: transform .33s cubic-bezier( var( --bezier ) );
+  transition: transform var( --duration ) cubic-bezier( var( --bezier ) );
 }
 .g-slider--is-animating .g-slider__nav {
   pointer-events: none;
