@@ -88,7 +88,7 @@ const g_s = {
                               const total_width = preceeding_widths - ( diff / 2 );
 
                               // set track position
-                              g_s.track.style.transform = 'translateX(' + -total_width + 'px)';
+                              g_s.track.style.transform = `translateX(${-total_width}px)`;
                             },
 
   switchSrc               : image => {
@@ -164,49 +164,69 @@ const g_s = {
                               // re-select current index to the "new" next slide
                               g_s.current_index = g_s.getNextInSequence(delta);
                             },
-  
-  enableArrowKeys         : () => {
-
-                              g_s.track.addEventListener('focus', () => {
-                                window.addEventListener('keydown', g_s.handleArrowKey, true)
-                              });
-                              g_s.track.addEventListener('blur', () => {
-                                window.removeEventListener('keydown', g_s.handleArrowKey, true)
-                              });
-                              g_s.track.focus();
-                            },
-
-  handleArrowKey          : event => {
-                              // Do nothing if the event was already processed
-                              if (event.defaultPrevented) {
-                                  return; 
-                                }
-
-                                switch (event.key) {
-
-                                  // Left arrow moves left
-                                  case "ArrowLeft":
-                                    g_s.update(-1);
-                                    break;
-
-                                  // Right arrow moves right
-                                  case "ArrowRight":
-                                    g_s.update(1);
-                                    break;
-
-                                  // Unfocus the track
-                                  case "Escape":
-                                    document.activeElement.blur()
-                                    break;
-
-                                   // Quit when this doesn't handle the key event.
-                                  default:
-                                    return;
-                                }
-
-                                // Cancel the default action to avoid it being handled twice
-                                event.preventDefault();
+  arrows                  : {
+    enable                  : () => {
+                                g_s.track.addEventListener('focus', () => {
+                                  window.addEventListener('keydown', g_s.arrows.handle, true)
+                                });
+                                g_s.track.addEventListener('blur', () => {
+                                  window.removeEventListener('keydown', g_s.arrows.handle, true)
+                                });
+                                g_s.track.focus();
                               },
+    handle                  : event => {
+                                // Do nothing if the event was already processed
+                                if (event.defaultPrevented) {
+                                    return; 
+                                  }
+
+                                  switch (event.key) {
+
+                                    // Left arrow moves left
+                                    case "ArrowLeft":
+                                      g_s.update(-1);
+                                      break;
+
+                                    // Right arrow moves right
+                                    case "ArrowRight":
+                                      g_s.update(1);
+                                      break;
+
+                                    // Unfocus the track
+                                    case "Escape":
+                                      document.activeElement.blur()
+                                      break;
+
+                                     // Quit when this doesn't handle the key event.
+                                    default:
+                                      return;
+                                  }
+
+                                  // Cancel the default action to avoid it being handled twice
+                                  event.preventDefault();
+                                },
+                            },
+  
+  touch                   : {
+    enable                  : () => {
+                                  const events = ['touchstart', 'touchmove', 'touchend'];
+                                  const functions = [g_s.touch.start, g_s.touch.move, g_s.touch.end];
+                                  for ( let i = 0; i < events.length; i++ ) {
+                                    g_s.track.addEventListener( events[i], functions[i], true );
+                                  }
+                                },
+    start                   : (e) => {
+                                  g_s.touch.start_x = e.touches[0].pageX;
+                                },
+    move                    : (e) => {
+                                  g_s.touch.end_x = e.touches[0].pageX;
+                                },
+    end                     : (e) => {
+                                  g_s.touch.start_x > g_s.touch.end_x && g_s.update(1);
+                                  g_s.touch.start_x < g_s.touch.end_x && g_s.update(-1);
+                                },
+
+                          },
 
   // run all of the functions needed to more forward or back
   update                  : (delta = 0) => {
@@ -248,40 +268,43 @@ const g_s = {
 
                                 // add classes to new slides
                                 g_s.setImageClasses('add');
-                              }, 15); // Firefox needs training wheels
+                              }, 20); // Firefox needs training wheels
                               
                             },
 
-  init                    : () => {
+  init                    : function(){
                               // get current state of slides
-                              g_s.setSlides();
+                              this.setSlides();
 
                               // set track position
-                              g_s.setTrackPosition();
+                              this.setTrackPosition();
 
                               // get rid of get rid of curtain when slider ready
-                              g_s.curtain.addEventListener('transitionend', function(){
+                              this.curtain.addEventListener('transitionend', function(){
                                 g_s.curtain.parentNode.removeChild(g_s.curtain);
                               });
 
                               // open curtain
-                              g_s.curtain.classList.add('g-slider__curtain--is-opening');
+                              this.curtain.classList.add('g-slider__curtain--is-opening');
 
                               // add classes to the proper elements
-                              g_s.setImageClasses();
+                              this.setImageClasses();
 
                               // enable use of keyboard arrows to control slider
-                              g_s.enableArrowKeys();
+                              this.arrows.enable();
+
+                              // enable use of swipe to change slides
+                              this.touch.enable();
                               
                               // trigger to remove class from slider once transition is over
-                              g_s.container.addEventListener('transitionend', function(){
+                              this.container.addEventListener('transitionend', function(){
                                 g_s.container.classList.remove('g-slider--is-animating');
                               });
 
                               // trigger to recalculate slide widths when window resize occurs
                               var last_known_scroll_position = 0;
                               var ticking = false;
-                              window.addEventListener('resize', function(e) {
+                              window.addEventListener('resize', (e) => {
                                 last_known_scroll_position = window.scrollY;
                                 if (!ticking) {
                                   window.requestAnimationFrame(function() {
