@@ -52,4 +52,6 @@ A horizontal image slider made with vanilla javascript.
  - Touch scroll follows finger on longer swipe instead of triggering update immediately
  - Accessibility audit and update
  - Pass in settings object via init
+ - Eliminate 'setScrollDirection'
+ - Set up build pipeline with dist directory
  - ...
