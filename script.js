@@ -248,7 +248,7 @@ const g_s = {
 
                                 // add classes to new slides
                                 g_s.setImageClasses('add');
-                              }, 1);
+                              }, 15); // Firefox needs training wheels
                               
                             },
 
