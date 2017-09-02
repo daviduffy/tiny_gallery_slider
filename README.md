@@ -42,8 +42,11 @@ Intended use is to copy and modify the code directly, move html elements around,
 ### Responsive:
  - Slider height is determined by the `--height` CSS custom property. All other elements are fluid and will adjust based on the height of this property. The slider recalculates slide widths and track position, re-centering the current slide automatically if the screen dimensions change.
 
+### Load-in Curtain:
+ - Loading spinner on a solid white background is shown until the images are centered on the page (~0.5s). At 0.5s, the curtain and spinner fade out and are removed from the DOM.
+
 ## In Progress:
- - address intro delay: curtain over slider while images loading + event listener for when images loaded?
+ - Change arbitrary setTimeout delay into actual load-in event triggered when all initial images are loaded.
 
 ## Planned:
  - Init via object

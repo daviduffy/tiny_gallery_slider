@@ -4,50 +4,59 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <link rel="stylesheet" href="style.css">
-  <title>Slider Test</title>
+  <title>Tiny Gallery Slider</title>
 </head>
 <body>
-  <div class="page">
-    <div class="g-slider">
-      <div class="g-slider__track" style="width: 9999px;">
-        <div class="g-slider__slide g-slider__slide--9">
+  <main class="page">
+    <section class="g-slider">
+      <ul class="g-slider__track" style="width: 9999px;">
+        <li class="g-slider__slide g-slider__slide--9">
           <img src="http://placehold.it/1200x800?text=slide9" />
-        </div>
-        <div class="g-slider__slide g-slider__slide--1">
-          <img src="img/img-1.png" />
-        </div>
-        <div class="g-slider__slide g-slider__slide--2">
-          <img src="img/img-2.png" />
-        </div>
-        <div class="g-slider__slide g-slider__slide--3">
-          <img src="img/img-3.png" />
-        </div>
-        <div class="g-slider__slide g-slider__slide--4">
-          <img src="img/img-4.png" />
-        </div>
-        <div class="g-slider__slide g-slider__slide--5">
+        </li>
+        <li class="g-slider__slide g-slider__slide--1">
+          <img src="http://placehold.it/1200x800?text=slide1" />
+        </li>
+        <li class="g-slider__slide g-slider__slide--2">
+          <img src="http://placehold.it/1200x800?text=slide2" />
+        </li>
+        <li class="g-slider__slide g-slider__slide--3">
+          <img src="http://placehold.it/1200x800?text=slide3" />
+        </li>
+        <li class="g-slider__slide g-slider__slide--4">
+          <img data-src="http://placehold.it/1200x800?text=slide4" />
+        </li>
+        <li class="g-slider__slide g-slider__slide--5">
           <img data-src="http://placehold.it/1200x800?text=slide5" />
-        </div>
-        <div class="g-slider__slide g-slider__slide--6">
+        </li>
+        <li class="g-slider__slide g-slider__slide--6">
           <img data-src="http://placehold.it/800x1200?text=slide6" />
-        </div>
-        <div class="g-slider__slide g-slider__slide--7">
+        </li>
+        <li class="g-slider__slide g-slider__slide--7">
           <img data-src="http://placehold.it/1200x800?text=slide7" />
-        </div>
-        <div class="g-slider__slide g-slider__slide--8">
+        </li>
+        <li class="g-slider__slide g-slider__slide--8">
           <img src="http://placehold.it/800x1200?text=slide8" />
-        </div>
-      </div>
-      <nav class="g-slider__nav">
+        </li>
+      </ul>
+      <div class="g-slider__nav">
         <button class="g-slider__nav-button" onclick="g_s.update(-1);">
           <span class="g-slider__nav-icon g-slider__nav-icon--left">&raquo;</span>
         </button>
         <button class="g-slider__nav-button" onclick="g_s.update(1);">
           <span class="g-slider__nav-icon g-slider__nav-icon--right">&raquo;</span>
         </button>
-      </nav>
-    </div>
-  </div>
+      </div>
+      <div class="g-slider__curtain">
+        <svg class="g-slider__spinner" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 73.99 73.99">
+          <defs>
+            <style>._l{fill:none;stroke:#999;stroke-miterlimit:10;stroke-width:2px;}</style>
+          </defs>
+          <title>Loader</title>
+          <g id="Layer_2" data-name="Layer 2"><path class="_l" d="M73 37.66A36 36 0 1 1 36.28 1" id="Layer_1-2" data-name="Layer 1"/></g>
+        </svg>
+      </div>
+    </section>
+  </main>
   <script src="script.js"></script>
 </body>
 </html>
