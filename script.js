@@ -82,7 +82,6 @@ const g_s = {
     },
 
     setTranslation          : () => {
-      g_s.track.calc();
       g_s.__track.style.transform = `translateX(${g_s.track.position}px)`;
     },
     // run all of the functions needed to more forward or back
@@ -121,6 +120,7 @@ const g_s = {
         // console.log('before animation', g_s.__track.style.transform);
 
         // set CSS for slider __track
+        g_s.track.calc();
         g_s.track.setTranslation();
 
         // add classes to new slides
@@ -183,6 +183,7 @@ const g_s = {
       g_s.current_index = g_s.current_index + -(delta*2);
 
       // reset translation of __track to previous slide
+      g_s.track.calc();
       g_s.track.setTranslation();
 
       // re-select current index to the "new" next slide
@@ -252,6 +253,8 @@ const g_s = {
   },
   
   touch : {
+    active: false,
+    old_track_position: 0,
     enable : () => {
       const events = ['touchstart', 'touchmove', 'touchend'];
       const functions = [g_s.touch.start, g_s.touch.move, g_s.touch.end];
@@ -260,6 +263,7 @@ const g_s = {
       }
     },
     start : (e) => {
+      g_s.touch.old_track_position = g_s.track.position;
       g_s.touch.start_x = e.touches[0].pageX;
       g_s.touch.long_touch = false;
       setTimeout(function() {
@@ -267,10 +271,17 @@ const g_s = {
       }, 250);
     },
     move : (e) => {
-      g_s.touch.end_x = e.touches[0].pageX;
-      g_s.touch.dist_x = g_s.touch.start_x - g_s.touch.end_x;
-      console.log(g_s.touch.dist_x);
-      g_s.__track.style.transform = `translateX(${g_s.track.position - g_s.touch.dist_x}px)`;
+      if (!g_s.touch.active) {
+        window.requestAnimationFrame(function() {
+          g_s.touch.end_x = e.touches[0].pageX;
+          g_s.touch.dist_x = g_s.touch.start_x - g_s.touch.end_x;
+          g_s.track.position = g_s.touch.old_track_position - g_s.touch.dist_x;
+          g_s.__track.style.transform = `translateX(${g_s.track.position}px)`;
+          g_s.touch.active = false;
+        });
+      }
+      g_s.touch.active = true;
+
     },
     end : (e) => {
       g_s.touch.start_x > g_s.touch.end_x && g_s.track.scroll(1);
@@ -283,6 +294,7 @@ const g_s = {
     this.slides.resetData();
 
     // set __track position
+    this.track.calc();
     this.track.setTranslation();
 
     // get rid of get rid of __curtain when slider ready
@@ -313,6 +325,7 @@ const g_s = {
       if (!ticking) {
         window.requestAnimationFrame(function() {
           g_s.slides.resetData();
+          g_s.track.calc();
           g_s.track.setTranslation();
           ticking = false;
         });
