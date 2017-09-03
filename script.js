@@ -81,8 +81,8 @@ const g_s = {
       g_s.track.position = -total_width;
     },
 
-    setTranslation          : () => {
-      g_s.__track.style.transform = `translateX(${g_s.track.position}px)`;
+    setTranslation          : (position) => {
+      g_s.__track.style.transform = `translateX(${position}px)`;
     },
     // run all of the functions needed to more forward or back
     scroll                  : (delta = 0) => {
@@ -121,7 +121,7 @@ const g_s = {
 
         // set CSS for slider __track
         g_s.track.calc();
-        g_s.track.setTranslation();
+        g_s.track.setTranslation(g_s.track.position);
 
         // add classes to new slides
         g_s.slides.setClasses('add');
@@ -184,7 +184,7 @@ const g_s = {
 
       // reset translation of __track to previous slide
       g_s.track.calc();
-      g_s.track.setTranslation();
+      g_s.track.setTranslation(g_s.track.position);
 
       // re-select current index to the "new" next slide
       g_s.current_index = g_s.getNextInSequence(delta);
@@ -276,7 +276,7 @@ const g_s = {
           g_s.touch.end_x = e.touches[0].pageX;
           g_s.touch.dist_x = g_s.touch.start_x - g_s.touch.end_x;
           g_s.track.position = g_s.touch.old_track_position - g_s.touch.dist_x;
-          g_s.__track.style.transform = `translateX(${g_s.track.position}px)`;
+          g_s.track.setTranslation(g_s.track.position);
           g_s.touch.active = false;
         });
       }
@@ -295,7 +295,7 @@ const g_s = {
 
     // set __track position
     this.track.calc();
-    this.track.setTranslation();
+    this.track.setTranslation(g_s.track.position);
 
     // get rid of get rid of __curtain when slider ready
     this.__curtain.addEventListener('transitionend', function(){
@@ -326,7 +326,7 @@ const g_s = {
         window.requestAnimationFrame(function() {
           g_s.slides.resetData();
           g_s.track.calc();
-          g_s.track.setTranslation();
+          g_s.track.setTranslation(g_s.track.position);
           ticking = false;
         });
       }
