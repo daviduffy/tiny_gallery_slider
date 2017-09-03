@@ -23,6 +23,9 @@ A horizontal image slider made with vanilla javascript.
     ```
 
 
+### Touch-enabled:
+ - Slider follows finger input for swipe and flick.
+
 ### Lazy loading: (No AJAX)
  - Slide images can be loaded on-demand by substituting `data-src` for the normal `src` attribute. When a slide with a `data-src` attribute is 2 slides away from the current slide, the image is loaded by adding a `src` attribute and setting it to the value of the `data-src` attribute. The `data-src` attribute is removed.
 
@@ -49,7 +52,6 @@ A horizontal image slider made with vanilla javascript.
  - Change arbitrary setTimeout delay into actual load-in event triggered when all initial images are loaded.
 
 ## Planned:
- - Touch scroll follows finger on longer swipe instead of triggering update immediately
  - Accessibility audit and update
  - Pass in settings object via init
  - Eliminate 'setScrollDirection'

@@ -54,35 +54,35 @@ const g_s = {
     // sets the CSS to center the current image
     calc : () => {
 
-    // all slide elements that come before the current one
-    const preceeding_slides = g_s.all_slides.filter(current => g_s.all_slides.indexOf(current) < g_s.current_index );
-    // console.table(preceeding_slides);
+      // all slide elements that come before the current one
+      const preceeding_slides = g_s.all_slides.filter(current => g_s.all_slides.indexOf(current) < g_s.current_index );
+      // console.table(preceeding_slides);
 
-    // add up widths of all slides before this one
-    const preceeding_slide_widths = preceeding_slides.map(current => current.width);
-    // console.log('preceeding widths: ', preceeding_slide_widths);
+      // add up widths of all slides before this one
+      const preceeding_slide_widths = preceeding_slides.map(current => current.width);
+      // console.log('preceeding widths: ', preceeding_slide_widths);
 
-    // prevent error from reducing empty array
-    let preceeding_widths = 0;
-    if ( preceeding_slide_widths.length > 0 ) {
-      preceeding_widths += preceeding_slide_widths.reduce((prev, curr) => prev + curr + g_s.slide_width_modifier );
-    }
-    // console.log('combined preceeding width: ', preceeding_widths);
+      // prevent error from reducing empty array
+      let preceeding_widths = 0;
+      if ( preceeding_slide_widths.length > 0 ) {
+        preceeding_widths += preceeding_slide_widths.reduce((prev, curr) => prev + curr + g_s.slide_width_modifier );
+      }
+      // console.log('combined preceeding width: ', preceeding_widths);
 
-    // get diff between current slide and window
-    // console.log('current width: ', g_s.all_slides[g_s.current_index].width)
-    const diff = g_s.__container.clientWidth - g_s.all_slides[g_s.current_index].width;
-    // console.log('diff: ', diff);
+      // get diff between current slide and window
+      // console.log('current width: ', g_s.all_slides[g_s.current_index].width)
+      const diff = g_s.__container.clientWidth - g_s.all_slides[g_s.current_index].width;
+      // console.log('diff: ', diff);
 
-    // add diff / 2 to widths
-    const total_width = preceeding_widths - ( diff / 2 );
+      // add diff / 2 to widths
+      const total_width = preceeding_widths - ( diff / 2 );
 
-    // set var
-    g_s.track.position = -total_width;
-  },
-    setTranslation          : () => {
-      g_s.track.calc();
-      g_s.__track.style.transform = `translateX(${g_s.track.position}px)`;
+      // set var
+      g_s.track.position = -total_width;
+    },
+
+    setTranslation          : (position) => {
+      g_s.__track.style.transform = `translateX(${position}px)`;
     },
     // run all of the functions needed to more forward or back
     scroll                  : (delta = 0) => {
@@ -120,7 +120,8 @@ const g_s = {
         // console.log('before animation', g_s.__track.style.transform);
 
         // set CSS for slider __track
-        g_s.track.setTranslation();
+        g_s.track.calc();
+        g_s.track.setTranslation(g_s.track.position);
 
         // add classes to new slides
         g_s.slides.setClasses('add');
@@ -182,7 +183,8 @@ const g_s = {
       g_s.current_index = g_s.current_index + -(delta*2);
 
       // reset translation of __track to previous slide
-      g_s.track.setTranslation();
+      g_s.track.calc();
+      g_s.track.setTranslation(g_s.track.position);
 
       // re-select current index to the "new" next slide
       g_s.current_index = g_s.getNextInSequence(delta);
@@ -250,25 +252,38 @@ const g_s = {
     },
   },
   
-  touch                   : {
-    enable                  : () => {
+  touch : {
+    active: false,
+    old_track_position: 0,
+    enable : () => {
       const events = ['touchstart', 'touchmove', 'touchend'];
       const functions = [g_s.touch.start, g_s.touch.move, g_s.touch.end];
       for ( let i = 0; i < events.length; i++ ) {
         g_s.__track.addEventListener( events[i], functions[i], true );
       }
     },
-    start                   : (e) => {
+    start : (e) => {
+      g_s.touch.old_track_position = g_s.track.position;
       g_s.touch.start_x = e.touches[0].pageX;
       g_s.touch.long_touch = false;
       setTimeout(function() {
-        g_s.touch.long_touch = false;
+        g_s.touch.long_touch = true;
       }, 250);
     },
     move : (e) => {
-      g_s.touch.end_x = e.touches[0].pageX;
+      if (!g_s.touch.active) {
+        window.requestAnimationFrame(function() {
+          g_s.touch.end_x = e.touches[0].pageX;
+          g_s.touch.dist_x = g_s.touch.start_x - g_s.touch.end_x;
+          g_s.track.position = g_s.touch.old_track_position - g_s.touch.dist_x;
+          g_s.track.setTranslation(g_s.track.position);
+          g_s.touch.active = false;
+        });
+      }
+      g_s.touch.active = true;
+
     },
-    end  : (e) => {
+    end : (e) => {
       g_s.touch.start_x > g_s.touch.end_x && g_s.track.scroll(1);
       g_s.touch.start_x < g_s.touch.end_x && g_s.track.scroll(-1);
     },
@@ -279,7 +294,8 @@ const g_s = {
     this.slides.resetData();
 
     // set __track position
-    this.track.setTranslation();
+    this.track.calc();
+    this.track.setTranslation(g_s.track.position);
 
     // get rid of get rid of __curtain when slider ready
     this.__curtain.addEventListener('transitionend', function(){
@@ -304,14 +320,13 @@ const g_s = {
     });
 
     // trigger to recalculate slide widths when window resize occurs
-    var last_known_scroll_position = 0;
-    var ticking = false;
+    let ticking = false;
     window.addEventListener('resize', (e) => {
-      last_known_scroll_position = window.scrollY;
       if (!ticking) {
         window.requestAnimationFrame(function() {
           g_s.slides.resetData();
-          g_s.track.setTranslation();
+          g_s.track.calc();
+          g_s.track.setTranslation(g_s.track.position);
           ticking = false;
         });
       }
