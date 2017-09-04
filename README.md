@@ -26,28 +26,28 @@ Structure markup as a container `<div>` with a class, id, or other attribute to 
   ```
 
 #### JavaScript
-Include the `g-slider.js` or `g-slider.min.js` file in your pipeline or add as a `<script>` tag directly to the end of the `<body>`.
+Include the `g-slider.js` or `g-slider.min.js` file in your pipeline or add as a script tag directly to the end of the body.
 
 
 #### Initialization
 Target the `<div>` element from above using whatever method you choose. 
 
-```JavaScript
+  ```JavaScript
   g_s.init({
     element: document.querySelector('.class-to-target')
   });
-```
+  ```
 
 #### Preventing FOUC (flash of unstyled content)
-For a brief moment before classes the JS runs, the styles applied by your site's CSS will be all that is applied to the slide elements. There are a few strategies that help mitigate the flashing effects:
+For a brief moment before classes the JS runs, the styles applied by your site's CSS will be all that is applied to the slide elements. There is a strategy that eliminates that effect:
   1. Set the slides to `opacity: 0` in your CSS. Slides will be set to `opacity: 1` once the slider is ready.
   2. Add a `<div>` element with the class `g-slider__curtain` just after the slide track `<ul>`. The curtain will fade out once the slider is ready. Optionally, you may add any inner element with the class `g-slider__spinner` Styles to make the spinner rotate are already present in the CSS.
 
-    ```HTML
-    <div class="g-slider__curtain">
-      <svg class="g-slider__spinner" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 73.99 73.99"><defs><style>._l{fill:none;stroke:#999;stroke-miterlimit:10;stroke-width:2px;}</style></defs><title>Loader</title><g id="Layer_2" data-name="Layer 2"><path class="_l" d="M73 37.66A36 36 0 1 1 36.28 1" id="Layer_1-2" data-name="Layer 1"/></g></svg>
-    </div>
-    ```
+  ```HTML
+  <div class="g-slider__curtain">
+    <svg class="g-slider__spinner" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 73.99 73.99"><defs><style>._l{fill:none;stroke:#999;stroke-miterlimit:10;stroke-width:2px;}</style></defs><title>Loader</title><g id="Layer_2" data-name="Layer 2"><path class="_l" d="M73 37.66A36 36 0 1 1 36.28 1" id="Layer_1-2" data-name="Layer 1"/></g></svg>
+  </div>
+  ```
 
 
 ## Features
@@ -61,11 +61,10 @@ For a brief moment before classes the JS runs, the styles applied by your site's
  - animation timing and easing set in CSS via the `g-slider--is-animating` class
  - classes for previous, current, and next slides:
     ```CSS
-        .g-slider__slide--is-prev
-        .g-slider__slide--is-current
-        .g-slider__slide--is-next
+    .g-slider__slide--is-prev
+    .g-slider__slide--is-current
+    .g-slider__slide--is-next
     ```
-
 
 #### Touch-enabled:
  - Slider follows finger input for swipe and flick.
