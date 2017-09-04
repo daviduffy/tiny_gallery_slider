@@ -48,7 +48,7 @@ For a brief moment before classes the JS runs, the styles applied by your site's
     <svg class="g-slider__spinner" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 73.99 73.99"><defs><style>._l{fill:none;stroke:#999;stroke-miterlimit:10;stroke-width:2px;}</style></defs><title>Loader</title><g id="Layer_2" data-name="Layer 2"><path class="_l" d="M73 37.66A36 36 0 1 1 36.28 1" id="Layer_1-2" data-name="Layer 1"/></g></svg>
   </div>
   ```
-
+  _note: `svg` spinner image included with example_
 
 ## Features
 
@@ -60,11 +60,11 @@ For a brief moment before classes the JS runs, the styles applied by your site's
  - scrolling in either direction supported. fading not supported.
  - animation timing and easing set in CSS via the `g-slider--is-animating` class
  - classes for previous, current, and next slides:
-    ```CSS
-    .g-slider__slide--is-prev
-    .g-slider__slide--is-current
-    .g-slider__slide--is-next
-    ```
+   ```CSS
+   .g-slider__slide--is-prev
+   .g-slider__slide--is-current
+   .g-slider__slide--is-next
+   ```
 
 #### Touch-enabled:
  - Slider follows finger input for swipe and flick.
@@ -72,16 +72,16 @@ For a brief moment before classes the JS runs, the styles applied by your site's
 #### Lazy loading: (No AJAX)
  - Slide images can be loaded on-demand by substituting `data-src` for the normal `src` attribute. When a slide with a `data-src` attribute is 2 slides away from the current slide, the image is loaded by adding a `src` attribute and setting it to the value of the `data-src` attribute. The `data-src` attribute is removed.
 
-    ```HTML
-        <div class="g-slider__slide g-slider__slide--4">
-          <img src="img/img-4.png" />
-          <!-- this slide's image will load when the page loads -->
-        </div>
-        <div class="g-slider__slide g-slider__slide--5">
-          <img data-src="img/img-5.png" />
-          <!-- this slide's image will load when the user scrolls close it it. Slide 3 if scrolling right, or slide 7 if scrolling left. -->
-        </div>
-    ```
+  ```HTML
+  <div class="g-slider__slide g-slider__slide--4">
+    <img src="img/img-4.png" />
+    <!-- this slide's image will load when the page loads -->
+  </div>
+  <div class="g-slider__slide g-slider__slide--5">
+    <img data-src="img/img-5.png" />
+    <!-- this slide's image will load when the user scrolls close it it. Slide 3 if scrolling right, or slide 7 if scrolling left. -->
+  </div>
+  ```
 
  - Currently you must have at least 5 images with `src` attributes when the page loads, with the `current_index` set to the center slide.
 
