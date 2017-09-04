@@ -1,8 +1,11 @@
 const g_s = {
   // elements
-  __container               : document.querySelector('.g-slider'),
-  __track                   : document.querySelector('.g-slider__track'),
-  __curtain                 : document.querySelector('.g-slider__curtain'),
+  // __container             : document.querySelector('.g-slider'),
+  // __track                 : document.querySelector('.g-slider__track'),
+  __curtain               : document.querySelector('.g-slider__curtain'),
+
+  //class
+  _class                  : 'g-slider',
 
   // global vars
   all_slides              : null,
@@ -288,54 +291,97 @@ const g_s = {
       g_s.touch.start_x < g_s.touch.end_x && g_s.track.scroll(-1);
     },
 },
+  setup : {
+    run : function() {
+      // get current state of slides
+      this.slides.resetData();
 
-  init : function(){
-    // get current state of slides
-    this.slides.resetData();
+      // set __track position
+      this.track.calc();
+      this.track.setTranslation(g_s.track.position);
 
-    // set __track position
-    this.track.calc();
-    this.track.setTranslation(g_s.track.position);
+      // get rid of get rid of __curtain when slider ready
+      this.__curtain.addEventListener('transitionend', () => {
+        this.__curtain.parentNode.removeChild(g_s.__curtain);
+      });
 
-    // get rid of get rid of __curtain when slider ready
-    this.__curtain.addEventListener('transitionend', function(){
-      g_s.__curtain.parentNode.removeChild(g_s.__curtain);
-    });
+      // open __curtain
+      this.__container.classList.add('g-slider--ready');
 
-    // open __curtain
-    this.__curtain.classList.add('g-slider__curtain--is-opening');
+      // add classes to the proper elements
+      this.slides.setClasses();
 
-    // add classes to the proper elements
-    this.slides.setClasses();
+      // enable use of keyboard arrows to control slider
+      this.arrows.enable();
 
-    // enable use of keyboard arrows to control slider
-    this.arrows.enable();
+      // enable use of swipe to change slides
+      this.touch.enable();
 
-    // enable use of swipe to change slides
-    this.touch.enable();
+      // trigger to remove class from slider once transition is over
+      this.__container.addEventListener('transitionend', () => {
+        this.__container.classList.remove('g-slider--is-animating');
+      });
 
-    // trigger to remove class from slider once transition is over
-    this.__container.addEventListener('transitionend', function(){
-      g_s.__container.classList.remove('g-slider--is-animating');
-    });
+      // trigger to recalculate slide widths when window resize occurs
+      let ticking = false;
+      window.addEventListener('resize', (e) => {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            this.slides.resetData();
+            this.track.calc();
+            this.track.setTranslation(g_s.track.position);
+            ticking = false;
+          });
+        }
+        ticking = true;
+      });
+    },
+    markup: (args) => {
+      args.element.classList.add(g_s._class);
+      g_s.__container = args.element;
 
-    // trigger to recalculate slide widths when window resize occurs
-    let ticking = false;
-    window.addEventListener('resize', (e) => {
-      if (!ticking) {
-        window.requestAnimationFrame(function() {
-          g_s.slides.resetData();
-          g_s.track.calc();
-          g_s.track.setTranslation(g_s.track.position);
-          ticking = false;
-        });
-      }
-      ticking = true;
-    });
+      const track = args.element.querySelector('*:first-child');
+      track.classList.add(`${g_s._class}__track`);
+      track.style.width = "9999999px";
+      track.setAttribute("tabindex", "0")
+      g_s.__track = track;
+
+      const slides = args.element.querySelectorAll('li');
+      slides.forEach(slide => {
+        slide.classList.add(`${g_s._class}__slide`);
+      });
+
+      const buttons = [{
+        class: ["g-slider__button", "g-slider__button--left"],
+        onclick: "g_s.track.scroll(-1)",
+        text: "previous"
+      },
+      {
+        class: ["g-slider__button", "g-slider__button--right"],
+        onclick: "g_s.track.scroll(1)",
+        text: "next"
+      }];
+
+      buttons.forEach(button_obj => {
+        let button_elem = document.createElement('button');
+        button_obj.class.forEach(the_class => {
+          button_elem.classList.add(the_class);
+        })
+        button_elem.setAttribute('onclick', button_obj.onclick);
+        button_elem.innerText = button_obj.text;
+        args.element.appendChild(button_elem);
+      })
+    },
+  },
+  init : function(args) {
+    this.setup.markup.call(g_s, args);
+    this.setup.run.call(g_s);
   }
 }
 // timeout here is to ensure that the slider doesn't center itself on the current_index
 // without all images loaded
-setTimeout(function(){
-  g_s.init();
+setTimeout(() => {
+  g_s.init({
+    element: document.querySelector('.target-class')
+  });
 },500)
