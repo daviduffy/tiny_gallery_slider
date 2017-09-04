@@ -14,6 +14,10 @@ body {
   padding: 0;
 }
 
+.hide-for-load-in {
+  opacity: 0;
+}
+
 /* Vars
 \* ========================================================================== */
 
@@ -96,6 +100,7 @@ html:root {
 }
 
 .g-slider__slide {
+  opacity: 0;
   height: 100%;
   margin: 0;
   float: left;
@@ -136,9 +141,14 @@ html:root {
 /* Curtain and Spinner Animation Styles
 \* ========================================================================== */
 
-.g-slider__curtain--is-opening {
-  opacity: 0;
+.g-slider--ready .g-slider__curtain {
+  opacity: 0!important;
   pointer-events: none;
+}
+
+.g-slider--ready .g-slider__slide {
+  display: block;
+  opacity: 1;
 }
 
 @keyframes rotate360 {
