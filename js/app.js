@@ -1,5 +1,5 @@
 const g_s = {
-  // elements
+  // element
   // __container             : document.querySelector('.g-slider'),
   // __track                 : document.querySelector('.g-slider__track'),
   __curtain               : document.querySelector('.g-slider__curtain'),
