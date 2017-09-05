@@ -100,9 +100,12 @@ All child elements in the slider are fluid and will adjust based on the height o
 ## In Progress:
  - Change arbitrary setTimeout delay into actual load-in event triggered when all initial images are loaded.
 
+## Issues:
+ - Debug occasional script crash (?)
+
 ## Planned:
+ - Add SVG arrows back
  - Accessibility audit and update
- - Pass in settings object via init
  - Eliminate 'setScrollDirection'
- - Set up build pipeline with dist directory
+ - Add autoprefixer
  - ...
