@@ -1,0 +1,38 @@
+{
+  "name": "tiny_gallery_slider",
+  "version": "1.0.0",
+  "description": "a responsive, infinite scrolling image gallery slider made with Vanilla JS",
+  "main": "script.js",
+  "dependencies": {},
+  "devDependencies": {
+    "babel-preset-env": "^1.6.0",
+    "del": "^3.0.0",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^4.0.0",
+    "gulp-babel": "^7.0.0",
+    "gulp-clean-css": "^3.8.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^3.1.0",
+    "gulp-sourcemaps": "^2.6.1",
+    "gulp-uglify": "^3.0.0",
+    "http-server": "^0.10.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daviduffy/tiny_gallery_slider.git"
+  },
+  "keywords": [
+    "slider",
+    "gallery"
+  ],
+  "author": "David Duffy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/daviduffy/tiny_gallery_slider/issues"
+  },
+  "homepage": "https://github.com/daviduffy/tiny_gallery_slider#readme"
+}
