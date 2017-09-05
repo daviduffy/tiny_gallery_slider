@@ -5,8 +5,9 @@ A horizontal image slider made with vanilla javascript.
 [Demo](http://daviduffy.me/slider/)
 
 ## Usage
+Include the `tiny-gallery-slider.min.css` and `tiny-gallery-slider.min.js` in your asset pipeline or directly in the head and body of your site. 
 
-#### Markup
+#### HTML
 Structure markup as a container `<div>` with a class, id, or other attribute to target. Include a `<ul>` which will act as the slider track, and `<li>`'s for each of the slides. 
 
   ```HTML
@@ -25,8 +26,11 @@ Structure markup as a container `<div>` with a class, id, or other attribute to 
   </div>
   ```
 
+#### CSS
+Pick which way suits you best: you can include the regular or minified `tiny-gallery-slider` css file from the `dist` directory, or you can take the `app.sass` file from the `sass` directory if that works better.
+
 #### JavaScript
-Include the `g-slider.js` or `g-slider.min.js` file in your pipeline or add as a script tag directly to the end of the body.
+Include `tiny-gallery-slider.js` or `tiny-gallery-slider.min.js` in your pipeline or add as a script tag directly to the end of the body.
 
 
 #### Initialization
@@ -39,16 +43,16 @@ Target the `<div>` element from above using whatever method you choose.
   ```
 
 #### Preventing FOUC (flash of unstyled content)
-For a brief moment before classes the JS runs, the styles applied by your site's CSS will be all that is applied to the slide elements. There is a strategy that eliminates that effect:
-  1. Set the slides to `opacity: 0` in your CSS. Slides will be set to `opacity: 1` once the slider is ready.
-  2. Add a `<div>` element with the class `g-slider__curtain` just after the slide track `<ul>`. The curtain will fade out once the slider is ready. Optionally, you may add any inner element with the class `g-slider__spinner` Styles to make the spinner rotate are already present in the CSS.
+For a brief moment before classes the JS runs, the styles applied by your site's CSS will be all that is governing the style of your slide elements. There is a strategy that eliminates that effect:
+  1. Give your slides a class set them to `opacity: 0` in your CSS. Slides will be set to `opacity: 1` by the slider CSS once the JS has run.
+  2. Add a `<div>` element with the class `g-slider__curtain` just after the slide track closing `</ul>` tag. The curtain will fade out once the slider is ready. Optionally, you may add any inner element with the class `g-slider__spinner`. Styles to make the spinner rotate are already present in the CSS.
 
   ```HTML
   <div class="g-slider__curtain">
     <svg class="g-slider__spinner" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 73.99 73.99"><defs><style>._l{fill:none;stroke:#999;stroke-miterlimit:10;stroke-width:2px;}</style></defs><title>Loader</title><g id="Layer_2" data-name="Layer 2"><path class="_l" d="M73 37.66A36 36 0 1 1 36.28 1" id="Layer_1-2" data-name="Layer 1"/></g></svg>
   </div>
   ```
-  _note: `svg` spinner image included with example_
+  _note: `svg` spinner image included with example is shown in the [demo](http://daviduffy.me/slider/)_
 
 ## Features
 

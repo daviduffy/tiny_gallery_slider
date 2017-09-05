@@ -28,15 +28,15 @@ gulp.task('compile-sass',function(){
 
 gulp.task('concat-css',['compile-sass'], function(){
     return gulp.src(['css/app.css'])
-        .pipe(concat('g-slider.css')) // concat into file name
+        .pipe(concat('tiny-gallery-slider.css')) // concat into file name
         .pipe(gulp.dest('css'));    // send that file to the css directory
 });
 
 gulp.task('minify-css',['concat-css'], function(){
-    return gulp.src('css/g-slider.css')
+    return gulp.src('css/tiny-gallery-slider.css')
         .pipe(maps.init({loadMaps:true}))   // create maps from scss *sourcemaps* not the css
         .pipe(cleanCSS())
-        .pipe(rename('g-slider.min.css'))
+        .pipe(rename('tiny-gallery-slider.min.css'))
         .pipe(maps.write('./'))
         .pipe(gulp.dest('css'));
 });
@@ -47,22 +47,22 @@ gulp.task('concat-scripts', function(){
         .pipe(babel({
             presets: ['env']
         }))
-        .pipe(concat('g-slider.js'))
+        .pipe(concat('tiny-gallery-slider.js'))
         .pipe(maps.write('./'))
         .pipe(gulp.dest('js'));
 });
 
 gulp.task('minify-scripts',['concat-scripts'], function(){
-    return gulp.src('js/g-slider.js')
+    return gulp.src('js/tiny-gallery-slider.js')
         .pipe(maps.init({loadmaps:true}))
         .pipe(uglify())
-        .pipe(rename('g-slider.min.js'))
+        .pipe(rename('tiny-gallery-slider.min.js'))
         .pipe(maps.write('./'))
         .pipe(gulp.dest('js'));
 });
 
 gulp.task('clean', function(){
-    del(['dist','css/g-slider*.css*','css/style.css*','js/g-slider*.js*']);
+    del(['dist','css/tiny-gallery-slider*.css*','css/style.css*','js/tiny-gallery-slider*.js*']);
 });
 
 gulp.task('watch', function(){
@@ -71,7 +71,7 @@ gulp.task('watch', function(){
 });
 
 gulp.task('build', ['minify-scripts', 'minify-css'], function(){ // array defined dependencies, which are all run before the default task
-    return gulp.src(['css/g-slider.min.css','js/g-slider.min.js','index.html'], {base:'./'})
+    return gulp.src(['css/tiny-gallery-slider.min.css','js/tiny-gallery-slider.min.js','index.html'], {base:'./'})
         .pipe(gulp.dest('dist'));
 });
 
