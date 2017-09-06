@@ -2,8 +2,6 @@
 
 var g_s = {
   // element
-  // __container             : document.querySelector('.g-slider'),
-  // __track                 : document.querySelector('.g-slider__track'),
   __curtain: document.querySelector('.g-slider__curtain'),
 
   //class
@@ -99,8 +97,6 @@ var g_s = {
     scroll: function scroll() {
       var delta = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
 
-      // set scroll direction
-      g_s.setScrollDirection(delta);
 
       // remove current classes from current slides
       g_s.slides.setClasses('remove');
@@ -171,23 +167,20 @@ var g_s = {
     },
 
     move: function move(delta) {
-      // set correct selector depending on the direction of travel
-      var selector = g_s.scrolling_right ? '.g-slider__slide:first-child' : '.g-slider__slide:last-child';
-
-      // target slide
-      var slide_to_move = g_s.__track.querySelector(selector);
-
-      // remove slide
-      var moved_slide = g_s.__track.removeChild(slide_to_move);
 
       // append slide in correct location
-      if (g_s.scrolling_right) {
+      if (delta > 0) {
 
-        // append as last slide
+        // target slide, remove, re-append
+        var slide_to_move = g_s.__track.querySelector('.g-slider__slide:first-child');
+        var moved_slide = g_s.__track.removeChild(slide_to_move);
         g_s.__track.appendChild(moved_slide);
       } else {
-        // append as first slide
-        g_s.__track.insertBefore(moved_slide, g_s.__track.querySelector('.g-slider__slide:first-child'));
+
+        // target slide, remove, re-append
+        var _slide_to_move = g_s.__track.querySelector('.g-slider__slide:last-child');
+        var _moved_slide = g_s.__track.removeChild(_slide_to_move);
+        g_s.__track.insertBefore(_moved_slide, g_s.__track.querySelector('.g-slider__slide:first-child'));
       }
 
       // reset slides
@@ -203,13 +196,12 @@ var g_s = {
       // re-select current index to the "new" next slide
       g_s.current_index = g_s.getNextInSequence(delta);
     },
+
     loadIf: function loadIf(delta) {
       var outer_slide = void 0;
-      var delta_extended = delta + delta;
 
       // delta + delta here allows us to load the slide after the next one in both directions
-      outer_slide = g_s.all_slides[g_s.getNextInSequence(delta_extended)];
-      // console.log('the slide I am checking is ', outer_slide.elem);
+      outer_slide = g_s.all_slides[g_s.getNextInSequence(delta + delta)];
 
       // find image inside slide
       var image = outer_slide.elem.querySelector('img');
@@ -267,7 +259,6 @@ var g_s = {
   },
 
   touch: {
-    active: false,
     old_track_position: 0,
     enable: function enable() {
       var events = ['touchstart', 'touchmove', 'touchend'];
@@ -279,22 +270,14 @@ var g_s = {
     start: function start(e) {
       g_s.touch.old_track_position = g_s.track.position;
       g_s.touch.start_x = e.touches[0].pageX;
-      g_s.touch.long_touch = false;
-      setTimeout(function () {
-        g_s.touch.long_touch = true;
-      }, 250);
     },
     move: function move(e) {
-      if (!g_s.touch.active) {
-        window.requestAnimationFrame(function () {
-          g_s.touch.end_x = e.touches[0].pageX;
-          g_s.touch.dist_x = g_s.touch.start_x - g_s.touch.end_x;
-          g_s.track.position = g_s.touch.old_track_position - g_s.touch.dist_x;
-          g_s.track.setTranslation(g_s.track.position);
-          g_s.touch.active = false;
-        });
-      }
-      g_s.touch.active = true;
+      window.requestAnimationFrame(function () {
+        g_s.touch.end_x = e.touches[0].pageX;
+        g_s.touch.dist_x = g_s.touch.start_x - g_s.touch.end_x;
+        g_s.track.position = g_s.touch.old_track_position - g_s.touch.dist_x;
+        g_s.track.setTranslation(g_s.track.position);
+      });
     },
     end: function end(e) {
       g_s.touch.start_x > g_s.touch.end_x && g_s.track.scroll(1);
@@ -361,6 +344,7 @@ var g_s = {
       var slides = args.element.querySelectorAll('li');
       slides.forEach(function (slide) {
         slide.classList.add(g_s._class + '__slide');
+        slide.querySelector('img').setAttribute("draggable", "false");
       });
 
       var buttons = [{

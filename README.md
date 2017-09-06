@@ -102,9 +102,9 @@ All child elements in the slider are fluid and will adjust based on the height o
 
 ## Issues:
  - Debug occasional script crash (?)
+ - Address blink on swipe off either end of array
 
 ## Planned:
- - Add SVG arrows back
  - Accessibility audit and update
  - Eliminate 'setScrollDirection'
  - Add autoprefixer
