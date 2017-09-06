@@ -1,7 +1,5 @@
 const g_s = {
   // element
-  // __container             : document.querySelector('.g-slider'),
-  // __track                 : document.querySelector('.g-slider__track'),
   __curtain               : document.querySelector('.g-slider__curtain'),
 
   //class
@@ -15,7 +13,7 @@ const g_s = {
   endless_scroll          : true,
 
   // unecessary but makes code easier to read
-  setScrollDirection      : delta => {
+  setScrollDirection : delta => {
     if ( delta > 0 ) {
       g_s.scrolling_right = true;
     } else if ( delta < 0 ) {
@@ -24,7 +22,7 @@ const g_s = {
   },
 
   // gets me the next number in the array sequence
-  getNextInSequence       : delta => {
+  getNextInSequence : delta => {
     let nextInSequence = g_s.current_index + delta;
 
     // diff employed to allow scrolling more than one slide at a time (future state)
@@ -51,9 +49,9 @@ const g_s = {
     }
     return nextInSequence;
   },
-  track                   : {
+  track : {
 
-    position                : 0,
+    position : 0,
     // sets the CSS to center the current image
     calc : () => {
 
@@ -84,13 +82,11 @@ const g_s = {
       g_s.track.position = -total_width;
     },
 
-    setTranslation          : (position) => {
+    setTranslation : (position) => {
       g_s.__track.style.transform = `translateX(${position}px)`;
     },
     // run all of the functions needed to more forward or back
-    scroll                  : (delta = 0) => {
-      // set scroll direction
-      g_s.setScrollDirection(delta);
+    scroll : (delta = 0) => {
 
       // remove current classes from current slides
       g_s.slides.setClasses('remove');
@@ -132,13 +128,13 @@ const g_s = {
     },
   },
 
-  slides                  : {
+  slides : {
     // function to refresh `slides` from time to time
-    resetData               : () => {
+    resetData : () => {
       g_s.all_slides = Array.from(document.querySelectorAll('.g-slider__slide')).map(current => ({elem: current, width: current.clientWidth}))
     },
     // handle src and data-src attribute value switch
-    switchSrc               : image => {
+    switchSrc : image => {
       // set src attribute to value from `data-src`
       image.setAttribute('src', image.dataset.src );
 
@@ -153,30 +149,29 @@ const g_s = {
       }
     },
     // hopefully self-explanatory
-    setClasses              : (action) => {
+    setClasses : (action) => {
       g_s.all_slides[g_s.getNextInSequence(-1)].elem.classList.toggle('g-slider__slide--is-prev');
       g_s.all_slides[g_s.current_index].elem.classList.toggle('g-slider__slide--is-current');
       g_s.all_slides[g_s.getNextInSequence(1)].elem.classList.toggle('g-slider__slide--is-next');
     },
 
     move : (delta) => {
-      // set correct selector depending on the direction of travel
-      const selector = g_s.scrolling_right ? '.g-slider__slide:first-child' : '.g-slider__slide:last-child';
-
-      // target slide
-      const slide_to_move = g_s.__track.querySelector(selector);
-
-      // remove slide
-      const moved_slide = g_s.__track.removeChild(slide_to_move);
 
       // append slide in correct location
-      if ( g_s.scrolling_right ) {
+      if ( delta > 0 ) {
 
-        // append as last slide
+        // target slide, remove, re-append
+        const slide_to_move = g_s.__track.querySelector('.g-slider__slide:first-child');
+        const moved_slide = g_s.__track.removeChild(slide_to_move);
         g_s.__track.appendChild(moved_slide);
+
       } else {
-        // append as first slide
+
+        // target slide, remove, re-append
+        const slide_to_move = g_s.__track.querySelector('.g-slider__slide:last-child');
+        const moved_slide = g_s.__track.removeChild(slide_to_move);
         g_s.__track.insertBefore(moved_slide, g_s.__track.querySelector('.g-slider__slide:first-child'));
+
       }
 
       // reset slides
@@ -192,13 +187,12 @@ const g_s = {
       // re-select current index to the "new" next slide
       g_s.current_index = g_s.getNextInSequence(delta);
     },
-    loadIf                  : delta => {
+
+    loadIf : delta => {
       let outer_slide;
-      let delta_extended = delta + delta;
 
       // delta + delta here allows us to load the slide after the next one in both directions
-      outer_slide = g_s.all_slides[ g_s.getNextInSequence(delta_extended) ];
-      // console.log('the slide I am checking is ', outer_slide.elem);
+      outer_slide = g_s.all_slides[ g_s.getNextInSequence( delta + delta ) ];
 
       // find image inside slide
       const image = outer_slide.elem.querySelector('img');
@@ -212,8 +206,8 @@ const g_s = {
     }
   },
 
-  arrows                  : {
-    enable                  : () => {
+  arrows : {
+    enable : () => {
       g_s.__track.addEventListener('focus', () => {
         window.addEventListener('keydown', g_s.arrows.handle, true)
       });
@@ -222,7 +216,7 @@ const g_s = {
       });
       g_s.__track.focus();
     },
-    handle                  : event => {
+    handle : event => {
       // Do nothing if the event was already processed
       if (event.defaultPrevented) {
         return;
@@ -256,7 +250,6 @@ const g_s = {
   },
   
   touch : {
-    active: false,
     old_track_position: 0,
     enable : () => {
       const events = ['touchstart', 'touchmove', 'touchend'];
@@ -268,23 +261,14 @@ const g_s = {
     start : (e) => {
       g_s.touch.old_track_position = g_s.track.position;
       g_s.touch.start_x = e.touches[0].pageX;
-      g_s.touch.long_touch = false;
-      setTimeout(function() {
-        g_s.touch.long_touch = true;
-      }, 250);
     },
     move : (e) => {
-      if (!g_s.touch.active) {
-        window.requestAnimationFrame(function() {
-          g_s.touch.end_x = e.touches[0].pageX;
-          g_s.touch.dist_x = g_s.touch.start_x - g_s.touch.end_x;
-          g_s.track.position = g_s.touch.old_track_position - g_s.touch.dist_x;
-          g_s.track.setTranslation(g_s.track.position);
-          g_s.touch.active = false;
-        });
-      }
-      g_s.touch.active = true;
-
+      window.requestAnimationFrame(function() {
+        g_s.touch.end_x = e.touches[0].pageX;
+        g_s.touch.dist_x = g_s.touch.start_x - g_s.touch.end_x;
+        g_s.track.position = g_s.touch.old_track_position - g_s.touch.dist_x;
+        g_s.track.setTranslation(g_s.track.position);
+      });
     },
     end : (e) => {
       g_s.touch.start_x > g_s.touch.end_x && g_s.track.scroll(1);
@@ -349,6 +333,7 @@ const g_s = {
       const slides = args.element.querySelectorAll('li');
       slides.forEach(slide => {
         slide.classList.add(`${g_s._class}__slide`);
+        slide.querySelector('img').setAttribute("draggable", "false");
       });
 
       const buttons = [{

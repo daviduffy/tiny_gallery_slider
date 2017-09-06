@@ -19,11 +19,17 @@ body
 // ========================================================================== */
 
 html:root
+  /* slider dimensions */
   --height                        : 99vh
   --max-height                    : 800px
   --width                         : 100%
+
+  /* animations */
   --duration                      : 0.44s
   --bezier                        : 0.56, 0.26, 0.37, 0.98
+
+  /* slider arrows */
+  --arrow-size                    : 30px
 
   //--min-width-small               : min-width: 360px*/
   //--max-width-small               : max-width: 599px*/
@@ -64,7 +70,7 @@ html:root
   right: 0
   bottom: 0
   left: 0
-  background-color: rgba(255,255,255,1)
+  background-color: rgba( 255,255,255,1 )
   opacity: 1
   transition: opacity var( --duration ) cubic-bezier( var( --bezier ) )
 
@@ -101,17 +107,30 @@ html:root
   top: 0
   bottom: 0
   margin: auto
-  max-height: 40px
+  padding: 4px
+  max-height: calc( var( --arrow-size ) * 1.5 + 8px)
   border: none
   background: none
+  line-height: 0px
+  font-size: 0px
   cursor: pointer
   user-select: none
+
+  &::before
+    content: ''
+    display: block
+    width: var( --arrow-size )
+    height: calc( var( --arrow-size ) * 1.5 )
+    background: url('data:image/svg+xml;utf8,<svg class="g-slider__nav-icon" fill="#fff" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40.99 77.01"><path d="M.74 4.27l36 36v-3.53l-36 36C-1.54 75 2 78.55 4.27 76.27l36-36a2.54 2.54 0 0 0 0-3.54l-36-36C2-1.54-1.54 2 .74 4.27z" data-name="l1"/></svg>') center/contain no-repeat
 
 .g-slider__button--right
   right: 10px
 
 .g-slider__button--left
   left: 10px
+  &::before
+    -webkit-transform: rotate(180deg)
+    transform: rotate(180deg)
 
 .g-slider__nav-icon
   display: inline-block
