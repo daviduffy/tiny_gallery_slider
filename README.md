@@ -106,6 +106,6 @@ All child elements in the slider are fluid and will adjust based on the height o
 
 ## Planned:
  - Accessibility audit and update
- - Eliminate 'setScrollDirection'
+ - Eliminate init in production file
  - Add autoprefixer
  - ...
