@@ -62,7 +62,7 @@ gulp.task('minify-scripts',['concat-scripts'], function(){
 });
 
 gulp.task('clean', function(){
-    del(['dist','css/tiny-gallery-slider*.css*','css/style.css*','js/tiny-gallery-slider*.js*']);
+    del(['dist','css/tiny-gallery-slider*.css*','css/style.css*','js/tiny-gallery-slider*.js*','js/demo.js']);
 });
 
 gulp.task('watch', function(){

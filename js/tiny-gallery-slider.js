@@ -372,11 +372,5 @@ var g_s = {
     this.setup.markup.call(g_s, args);
     this.setup.run.call(g_s);
   }
-  // timeout here is to ensure that the slider doesn't center itself on the current_index
-  // without all images loaded
-};setTimeout(function () {
-  g_s.init({
-    element: document.querySelector('.target-class')
-  });
-}, 500);
+};
 //# sourceMappingURL=tiny-gallery-slider.js.map
