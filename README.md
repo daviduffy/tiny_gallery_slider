@@ -34,7 +34,7 @@ Include `tiny-gallery-slider.js` or `tiny-gallery-slider.min.js` in your pipelin
 
 
 #### Initialization
-Target the `<div>` element from above using whatever method you choose. 
+Target the container `<div>` element mentioned above using whatever method you choose. 
 
   ```JavaScript
   g_s.init({
@@ -43,8 +43,8 @@ Target the `<div>` element from above using whatever method you choose.
   ```
 
 #### Preventing FOUC (flash of unstyled content)
-For a brief moment before classes the JS runs, the styles applied by your site's CSS will be all that is governing the style of your slide elements. There is a strategy that eliminates that effect:
-  1. Give your slides a class set them to `opacity: 0` in your CSS. Slides will be set to `opacity: 1` by the slider CSS once the JS has run.
+A common problem with using JS to apply style to markup is called "flash of unstyled content." This happens in the brief moment between the browser building your markup and the JS runs. During that split second, the styles applied by your site's CSS will be all that governs the look of your slide elements. There is a strategy that eliminates that effect, but you have to implement it in your regular site files:
+  1. Give your slides a class and set them to `opacity: 0` in your CSS. Slides will be set to `opacity: 1` by the slider CSS once the JS has run.
   2. Add a `<div>` element with the class `g-slider__curtain` just after the slide track closing `</ul>` tag. The curtain will fade out once the slider is ready. Optionally, you may add any inner element with the class `g-slider__spinner`. Styles to make the spinner rotate are already present in the CSS.
 
   ```HTML
@@ -101,11 +101,9 @@ All child elements in the slider are fluid and will adjust based on the height o
  - Change arbitrary setTimeout delay into actual load-in event triggered when all initial images are loaded.
 
 ## Issues:
- - Debug occasional script crash (?)
  - Address blink on swipe off either end of array
 
 ## Planned:
  - Accessibility audit and update
- - Eliminate init in production file
  - Add autoprefixer
  - ...
