@@ -4,7 +4,7 @@ const g_s = {
 
   //class
   _class                  : 'g-slider',
-
+ 
   // global vars
   all_slides              : null,
   slide_width_modifier    : 2, //px
@@ -17,7 +17,7 @@ const g_s = {
     if ( delta > 0 ) {
       g_s.scrolling_right = true;
     } else if ( delta < 0 ) {
-      g_s.scrolling_right = false;
+      g_s.scrolling_right = false; 
     }
   },
 
@@ -363,10 +363,3 @@ const g_s = {
     this.setup.run.call(g_s);
   }
 }
-// timeout here is to ensure that the slider doesn't center itself on the current_index
-// without all images loaded
-setTimeout(() => {
-  g_s.init({
-    element: document.querySelector('.target-class')
-  });
-},500)

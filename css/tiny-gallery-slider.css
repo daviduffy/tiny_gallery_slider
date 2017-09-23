@@ -1,17 +1,3 @@
-.page {
-  width: 100%;
-  height: 100vh;
-  padding-top: 2rem;
-  background-color: white;
-  margin: auto; }
-
-body {
-  margin: 0;
-  padding: 0; }
-
-.hide-for-load-in {
-  opacity: 0; }
-
 html:root {
   /* slider dimensions */
   --height: 99vh;
@@ -65,7 +51,8 @@ html:root {
   height: var(--height);
   max-height: var(--max-height);
   will-change: transform;
-  outline: none; }
+  outline: none;
+  touch-action: pan-y; }
 
 .g-slider__slide {
   opacity: 0;
