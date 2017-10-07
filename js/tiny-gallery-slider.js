@@ -273,6 +273,7 @@ var g_s = {
     },
     move: function move(e) {
       window.requestAnimationFrame(function () {
+        g_s.long_touch = false;
         g_s.touch.end_x = e.touches[0].pageX;
         g_s.touch.dist_x = g_s.touch.start_x - g_s.touch.end_x;
         g_s.track.position = g_s.touch.old_track_position - g_s.touch.dist_x;
@@ -296,9 +297,9 @@ var g_s = {
       this.track.setTranslation(g_s.track.position);
 
       // get rid of get rid of __curtain when slider ready
-      this.__curtain.addEventListener('transitionend', function () {
-        _this.__curtain.parentNode.removeChild(g_s.__curtain);
-      });
+      // this.__curtain.addEventListener('transitionend', () => {
+      //   this.__curtain.parentNode.removeChild(g_s.__curtain);
+      // });
 
       // open __curtain
       this.__container.classList.add('g-slider--ready');
@@ -331,17 +332,17 @@ var g_s = {
         ticking = true;
       });
     },
-    markup: function markup(args) {
-      args.element.classList.add(g_s._class);
-      g_s.__container = args.element;
+    markup: function markup(element) {
+      element.classList.add(g_s._class);
+      g_s.__container = element;
 
-      var track = args.element.querySelector('*:first-child');
+      var track = element.querySelector('*:first-child');
       track.classList.add(g_s._class + '__track');
       track.style.width = "9999999px";
       track.setAttribute("tabindex", "0");
       g_s.__track = track;
 
-      var slides = args.element.querySelectorAll('li');
+      var slides = element.querySelectorAll('li');
       slides.forEach(function (slide) {
         slide.classList.add(g_s._class + '__slide');
         slide.querySelector('img').setAttribute("draggable", "false");
@@ -364,13 +365,39 @@ var g_s = {
         });
         button_elem.setAttribute('onclick', button_obj.onclick);
         button_elem.innerText = button_obj.text;
-        args.element.appendChild(button_elem);
+        element.appendChild(button_elem);
       });
     }
   },
-  init: function init(args) {
-    this.setup.markup.call(g_s, args);
-    this.setup.run.call(g_s);
+  suspendedReveal: {
+    run: function run(element) {
+      var all_images = Array.from(element.querySelectorAll('img[src]')).filter(function (elem) {
+        return !elem.loaded;
+      });
+      var loaded_images = 0;
+      g_s.__curtain.classList.add('g-slider__curtain--' + loaded_images + '-of-' + all_images.length);
+      all_images.forEach(function (image) {
+        image.addEventListener('load', function () {
+          loaded_images++;
+          g_s.__curtain.classList.add('g-slider__curtain--' + loaded_images + '-of-' + all_images.length);
+          if (loaded_images === all_images.length) {
+            g_s.setup.run.call(g_s);
+          }
+        });
+      });
+    }
+  },
+  init: function init(_ref) {
+    var _ref$element = _ref.element,
+        element = _ref$element === undefined ? null : _ref$element,
+        _ref$suspendedReveal = _ref.suspendedReveal,
+        suspendedReveal = _ref$suspendedReveal === undefined ? false : _ref$suspendedReveal,
+        _ref$ondemandImages = _ref.ondemandImages,
+        ondemandImages = _ref$ondemandImages === undefined ? false : _ref$ondemandImages;
+
+
+    this.setup.markup.call(g_s, element);
+    g_s.suspendedReveal.run(element);
   }
 };
 //# sourceMappingURL=tiny-gallery-slider.js.map

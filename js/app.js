@@ -264,6 +264,7 @@ const g_s = {
     },
     move : (e) => {
       window.requestAnimationFrame(function() {
+        g_s.long_touch = false;
         g_s.touch.end_x = e.touches[0].pageX;
         g_s.touch.dist_x = g_s.touch.start_x - g_s.touch.end_x;
         g_s.track.position = g_s.touch.old_track_position - g_s.touch.dist_x;
@@ -274,7 +275,7 @@ const g_s = {
       g_s.touch.start_x > g_s.touch.end_x && g_s.track.scroll(1);
       g_s.touch.start_x < g_s.touch.end_x && g_s.track.scroll(-1);
     },
-},
+  },
   setup : {
     run : function() {
       // get current state of slides
@@ -285,9 +286,9 @@ const g_s = {
       this.track.setTranslation(g_s.track.position);
 
       // get rid of get rid of __curtain when slider ready
-      this.__curtain.addEventListener('transitionend', () => {
-        this.__curtain.parentNode.removeChild(g_s.__curtain);
-      });
+      // this.__curtain.addEventListener('transitionend', () => {
+      //   this.__curtain.parentNode.removeChild(g_s.__curtain);
+      // });
 
       // open __curtain
       this.__container.classList.add('g-slider--ready');
@@ -320,17 +321,17 @@ const g_s = {
         ticking = true;
       });
     },
-    markup: (args) => {
-      args.element.classList.add(g_s._class);
-      g_s.__container = args.element;
+    markup: (element) => {
+      element.classList.add(g_s._class);
+      g_s.__container = element;
 
-      const track = args.element.querySelector('*:first-child');
+      const track = element.querySelector('*:first-child');
       track.classList.add(`${g_s._class}__track`);
       track.style.width = "9999999px";
       track.setAttribute("tabindex", "0")
       g_s.__track = track;
 
-      const slides = args.element.querySelectorAll('li');
+      const slides = element.querySelectorAll('li');
       slides.forEach(slide => {
         slide.classList.add(`${g_s._class}__slide`);
         slide.querySelector('img').setAttribute("draggable", "false");
@@ -354,12 +355,34 @@ const g_s = {
         })
         button_elem.setAttribute('onclick', button_obj.onclick);
         button_elem.innerText = button_obj.text;
-        args.element.appendChild(button_elem);
+        element.appendChild(button_elem);
       })
     },
   },
-  init : function(args) {
-    this.setup.markup.call(g_s, args);
-    this.setup.run.call(g_s);
+  suspendedReveal : {
+    run : (element) => {
+      const all_images = Array.from(element.querySelectorAll('img[src]')).filter(elem => !elem.loaded);
+      let loaded_images = 0;
+      g_s.__curtain.classList.add(`g-slider__curtain--${loaded_images}-of-${all_images.length}`);
+      all_images.forEach(image => {
+        image.addEventListener('load', function(){
+          loaded_images++;
+          g_s.__curtain.classList.add(`g-slider__curtain--${loaded_images}-of-${all_images.length}`);
+          if (loaded_images === all_images.length){
+            g_s.setup.run.call(g_s);
+          }
+        });
+      })
+    }
+  },
+  init : function({
+            element = null,
+            suspendedReveal = false,
+            ondemandImages = false
+          }) {
+
+    this.setup.markup.call(g_s, element);
+    g_s.suspendedReveal.run(element)
+
   }
 }

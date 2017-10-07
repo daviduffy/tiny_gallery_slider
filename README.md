@@ -94,13 +94,14 @@ The height of the slider is determined by the `--height` CSS custom property, wh
 
 All child elements in the slider are fluid and will adjust based on the height of this property. The slider recalculates slide widths and track position, re-centering the current slide automatically if the screen dimensions change.
 
-#### Load-in Curtain:
- - Loading spinner on a solid white background is shown until the images are centered on the page (~0.5s). At 0.5s, the curtain and spinner fade out and are removed from the DOM.
+#### Load-in Curtain and Suspended Reveal:
+ - Loading spinner on a solid white background is shown until the images are loaded and centered on the page. Across the top of the slider, a loading bar shows the loading progress to help the user understand when they'll be able to see the images.
 
 ## In Progress:
- - Change arbitrary setTimeout delay into actual load-in event triggered when all initial images are loaded.
+ - Prevent vertical scroll when user is scrolling horizontally
 
 ## Issues:
+ - Adjust logic for lazy loading + suspended reveal so that if the plugin user decides not to use lazy loading, the suspended reveal doesn't wait until _all_ images are loaded to pull the curtain.
  - Address blink on swipe off either end of array
 
 ## Planned:
