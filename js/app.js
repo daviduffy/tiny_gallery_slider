@@ -360,19 +360,24 @@ const g_s = {
     },
   },
   suspendedReveal : {
+    loaded_images: 0,
+    all_images: [],
     run : (element) => {
-      const all_images = Array.from(element.querySelectorAll('img[src]')).filter(elem => !elem.loaded);
-      let loaded_images = 0;
-      g_s.__curtain.classList.add(`g-slider__curtain--${loaded_images}-of-${all_images.length}`);
-      all_images.forEach(image => {
+      g_s.suspendedReveal.all_images = Array.from(element.querySelectorAll('img[src]')).filter(elem => !elem.complete);
+      g_s.__curtain.classList.add(`g-slider__curtain--${g_s.suspendedReveal.loaded_images}-of-${g_s.suspendedReveal.all_images.length}`);
+      g_s.suspendedReveal.all_images.forEach(image => {
         image.addEventListener('load', function(){
-          loaded_images++;
-          g_s.__curtain.classList.add(`g-slider__curtain--${loaded_images}-of-${all_images.length}`);
-          if (loaded_images === all_images.length){
-            g_s.setup.run.call(g_s);
-          }
+          g_s.suspendedReveal.loaded_images++;
+          g_s.__curtain.classList.add(`g-slider__curtain--${g_s.suspendedReveal.loaded_images}-of-${g_s.suspendedReveal.all_images.length}`);
+          g_s.suspendedReveal.attempt();
         });
       })
+      g_s.suspendedReveal.attempt();
+    },
+    attempt : () => {
+      if (g_s.suspendedReveal.loaded_images === g_s.suspendedReveal.all_images.length){
+        g_s.setup.run.call(g_s);
+      }
     }
   },
   init : function({
