@@ -47,22 +47,22 @@ html:root {
   transform: translateX(-100%);
   transition: transform calc(var(--gs-duration)/2) cubic-bezier(var(--gs-bezier)); }
 
-.g-slider__curtain.g-slider__curtain--0-of-5::after {
+.g-slider__curtain.g-slider__curtain--0::after {
   transform: translateX(-93%); }
 
-.g-slider__curtain.g-slider__curtain--1-of-5::after {
+.g-slider__curtain.g-slider__curtain--1::after {
   transform: translateX(-80%); }
 
-.g-slider__curtain.g-slider__curtain--2-of-5::after {
+.g-slider__curtain.g-slider__curtain--2::after {
   transform: translateX(-58%); }
 
-.g-slider__curtain.g-slider__curtain--3-of-5::after {
+.g-slider__curtain.g-slider__curtain--3::after {
   transform: translateX(-44%); }
 
-.g-slider__curtain.g-slider__curtain--4-of-5::after {
+.g-slider__curtain.g-slider__curtain--4::after {
   transform: translateX(-10%); }
 
-.g-slider__curtain.g-slider__curtain--5-of-5::after {
+.g-slider__curtain.g-slider__curtain--5::after {
   transform: none; }
 
 .g-slider__spinner {
